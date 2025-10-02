@@ -22,6 +22,8 @@ public:
 
 private slots:
     void openClientModule();
+    void showPaymentModule();
+    void logout();
 
 private:
     Ui::MainWindow *ui;

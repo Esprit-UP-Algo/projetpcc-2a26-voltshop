@@ -11,15 +11,18 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    clientwindow.cpp
+    clientwindow.cpp \
+    loginwindow.cpp
 
 HEADERS += \
     mainwindow.h \
-    clientwindow.h
+    clientwindow.h \
+    loginwindow.h
 
 FORMS += \
     mainwindow.ui \
-    clientwindow.ui
+    clientwindow.ui \
+    login.ui
 
 RESOURCES += \
     resources.qrc

@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>ressource/arrow-down.png</file>
+        <file>ressource/chart2.png</file>
+        <file>ressource/credit-card.png</file>
+        <file>ressource/hethahowa-removebg-preview.png</file>
+        <file>ressource/icons8-calendar-50.png</file>
+        <file>ressource/log-out.png</file>
+        <file>ressource/testchart.png</file>
+        <file>ressource/logo.jpeg</file>
+        <file>ressource/PDF.png</file>
+        <file>ressource/EXCEL.png</file>
+        <file>ressource/stat.png</file>
+    </qresource>
+</RCC>

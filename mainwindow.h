@@ -17,7 +17,31 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_quit_clicked();
+    
+    // Edit button slots for each row
+    void on_pushButton_10_clicked(); // Row 0 edit button
+    void on_pushButton_14_clicked(); // Row 1 edit button  
+    void on_pushButton_11_clicked(); // Row 2 edit button
+    void on_pushButton_13_clicked(); // Row 3 edit button
+    void on_pushButton_12_clicked(); // Row 4 edit button
+    void on_pushButton_15_clicked(); // Row 5 edit button
+    
+    // Form button slots
+    void on_pushButton_3_clicked(); // Cancel button
+
 private:
     Ui::MainWindow *ui;
+    
+    // Helper function to populate form from table row
+    void populateFormFromTableRow(int row);
+    
+    // Helper function to reset form to add mode
+    void resetFormToAddMode();
+    
+    // Track if we're in edit mode and which row
+    bool isEditMode;
+    int currentEditRow;
 };
 #endif // MAINWINDOW_H

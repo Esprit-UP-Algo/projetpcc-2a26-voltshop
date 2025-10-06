@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>assests/creditcard.png</file>
+        <file>assests/logo.jpeg</file>
+        <file>assests/PDF.png</file>
+        <file>assests/stat.png</file>
+    </qresource>
+</RCC>

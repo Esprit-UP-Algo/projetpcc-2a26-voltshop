@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
-    <height>541</height>
+    <width>1398</width>
+    <height>658</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1131</width>
-     <height>541</height>
+     <x>10</x>
+     <y>20</y>
+     <width>1261</width>
+     <height>581</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -56,11 +56,11 @@ QTabBar::tab:hover {
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab">
+   <widget class="QWidget" name="tab_5">
     <attribute name="title">
-     <string>Client Management</string>
+     <string>Home</string>
     </attribute>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -70,31 +70,12 @@ QTabBar::tab:hover {
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QGroupBox {
-    background-color: rgb(173, 216, 230);
-    border: 2px solid #00A3E0;
-    border-radius: 6px;
-    margin-top: 20px;
-    padding: 10px;
-    font-family: Segoe UI, Arial;
-    font-size: 14px;
-    font-weight: bold;
-    color: #003271;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 2px 8px;
-    background-color: #00A3E0;
-    color: white;
-    border-radius: 4px;
-}</string>
+      <string notr="true">background-color: rgb(173, 216, 230);</string>
      </property>
      <property name="title">
       <string/>
      </property>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_17">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -105,13 +86,13 @@ QGroupBox::title {
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
        <string>CIN:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="label_18">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -122,13 +103,13 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
        <string>First Name:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="label_19">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -139,13 +120,13 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
        <string>Email:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_4">
+     <widget class="QLabel" name="label_20">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -156,13 +137,13 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
        <string>Last Name:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="label_21">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -173,13 +154,13 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
-       <string>Numéro Tél:</string>
+       <string>Phone nbr:</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_6">
+     <widget class="QLabel" name="label_22">
       <property name="geometry">
        <rect>
         <x>30</x>
@@ -190,13 +171,13 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="styleSheet">
        <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
+</string>
       </property>
       <property name="text">
-       <string>Adresse:</string>
+       <string>Adress:</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_cin">
+     <widget class="QLineEdit" name="lineEdit_17">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -210,7 +191,7 @@ color: rgb(0, 0, 0);</string>
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -221,7 +202,7 @@ QLineEdit:focus {
 }</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_lastname">
+     <widget class="QLineEdit" name="lineEdit_18">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -235,7 +216,7 @@ QLineEdit:focus {
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -246,7 +227,7 @@ QLineEdit:focus {
 }</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_email">
+     <widget class="QLineEdit" name="lineEdit_19">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -260,7 +241,7 @@ QLineEdit:focus {
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -271,7 +252,7 @@ QLineEdit:focus {
 }</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_phone">
+     <widget class="QLineEdit" name="lineEdit_20">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -285,7 +266,7 @@ QLineEdit:focus {
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -296,7 +277,7 @@ QLineEdit:focus {
 }</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_address">
+     <widget class="QLineEdit" name="lineEdit_21">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -310,7 +291,7 @@ QLineEdit:focus {
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -321,7 +302,7 @@ QLineEdit:focus {
 }</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit_firstname">
+     <widget class="QLineEdit" name="lineEdit_22">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -335,7 +316,7 @@ QLineEdit:focus {
     background-color: #f4faff;
     border: 2px solid #003271;
     border-radius: 6px;
-    padding: 6px 10px;
+    padding: 3px 3px;
     font-size: 14px;
     color: #000000;
 }
@@ -347,7 +328,31 @@ QLineEdit:focus {
       </property>
      </widget>
     </widget>
-    <widget class="QPushButton" name="pushButton_cancel">
+    <widget class="QPushButton" name="pushButton_25">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>460</y>
+       <width>93</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    background-color: #003271;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+QPushButton:hover { background-color: #004599; }
+QPushButton:pressed { background-color: #002050; }</string>
+     </property>
+     <property name="text">
+      <string>Confirm</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_26">
      <property name="geometry">
       <rect>
        <x>160</x>
@@ -371,136 +376,20 @@ QPushButton:pressed { background-color: #002050; }</string>
       <string>Cancel</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_addclient">
+    <widget class="QTableWidget" name="tableWidget_3">
      <property name="geometry">
       <rect>
-       <x>30</x>
-       <y>40</y>
-       <width>121</width>
-       <height>29</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
-    background-color: #003271;
-    color: white;
-    border-radius: 6px;
-    padding: 6px 12px;
-}
-QPushButton:hover { background-color: #004599; }
-QPushButton:pressed { background-color: #002050; }</string>
-     </property>
-     <property name="text">
-      <string>Add Client</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_exportpdf">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>440</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
-    background-color: #003271;
-    color: white;
-    border-radius: 6px;
-    padding: 6px 12px;
-    qproperty-icon: url(:/images/ressource/PDF.png);
-    qproperty-iconSize: 20px 20px;
-}
-QPushButton:hover { background-color: #004599; }
-QPushButton:pressed { background-color: #002050; }</string>
-     </property>
-     <property name="text">
-      <string>Export to PDF</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_exportexcel">
-     <property name="geometry">
-      <rect>
-       <x>680</x>
-       <y>440</y>
-       <width>151</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
-    background-color: #003271;
-    color: white;
-    border-radius: 6px;
-    padding: 6px 12px;
-    qproperty-icon: url(:/images/ressource/EXCEL.png);
-    qproperty-iconSize: 20px 20px;
-}
-QPushButton:hover { background-color: #004599; }
-QPushButton:pressed { background-color: #002050; }</string>
-     </property>
-     <property name="text">
-      <string>Export to Excel</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_delete">
-     <property name="geometry">
-      <rect>
-       <x>1020</x>
-       <y>440</y>
-       <width>93</width>
-       <height>29</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
-    background-color: #003271;
-    color: white;
-    border-radius: 6px;
-    padding: 6px 12px;
-}
-QPushButton:hover { background-color: #004599; }
-QPushButton:pressed { background-color: #002050; }</string>
-     </property>
-     <property name="text">
-      <string>Delete</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_8">
-     <property name="geometry">
-      <rect>
-       <x>450</x>
-       <y>90</y>
-       <width>121</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;
-color: rgb(0, 0, 0);</string>
-     </property>
-     <property name="text">
-      <string>Search for a client:</string>
-     </property>
-    </widget>
-    <widget class="QTableWidget" name="tableWidget">
-     <property name="geometry">
-      <rect>
-       <x>420</x>
-       <y>130</y>
-       <width>551</width>
-       <height>241</height>
+       <x>350</x>
+       <y>100</y>
+       <width>681</width>
+       <height>281</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QTableWidget {
     background-color: white;
-    alternate-background-color: #E6F2FA;
+	color : black;  
+ 	alternate-background-color: #E6F2FA;
     gridline-color: #ADD8E6;
     border: 1px solid #ADD8E6;
     selection-background-color: #003271;
@@ -580,17 +469,259 @@ QTableCornerButton::section {
      </column>
      <column>
       <property name="text">
-       <string>Adresse</string>
+       <string>Adress</string>
       </property>
      </column>
+     <column>
+      <property name="text">
+       <string>Phone Nbr</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>12345678</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>Ahmed</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>Ben Ali</string>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string>ahmed.benali@email.com</string>
+      </property>
+     </item>
+     <item row="0" column="4">
+      <property name="text">
+       <string>Tunis, Tunisia</string>
+      </property>
+     </item>
+     <item row="0" column="5">
+      <property name="text">
+       <string>+216 71 123 456</string>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string>87654321</string>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>Fatma</string>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="text">
+       <string>Sassi</string>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="text">
+       <string>fatma.sassi@email.com</string>
+      </property>
+     </item>
+     <item row="1" column="4">
+      <property name="text">
+       <string>Sfax, Tunisia</string>
+      </property>
+     </item>
+     <item row="1" column="5">
+      <property name="text">
+       <string>+216 74 987 654</string>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string>11223344</string>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="text">
+       <string>Mohamed</string>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>Triki</string>
+      </property>
+     </item>
+     <item row="2" column="3">
+      <property name="text">
+       <string>mohamed.triki@email.com</string>
+      </property>
+     </item>
+     <item row="2" column="4">
+      <property name="text">
+       <string>Sousse, Tunisia</string>
+      </property>
+     </item>
+     <item row="2" column="5">
+      <property name="text">
+       <string>+216 73 112 233</string>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="text">
+       <string>55667788</string>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="text">
+       <string>Leila</string>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="text">
+       <string>Mejri</string>
+      </property>
+     </item>
+     <item row="3" column="3">
+      <property name="text">
+       <string>leila.mejri@email.com</string>
+      </property>
+     </item>
+     <item row="3" column="4">
+      <property name="text">
+       <string>Ariana, Tunisia</string>
+      </property>
+     </item>
+     <item row="3" column="5">
+      <property name="text">
+       <string>+216 70 556 677</string>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="text">
+       <string>99887766</string>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="text">
+       <string>Karim</string>
+      </property>
+     </item>
+     <item row="4" column="2">
+      <property name="text">
+       <string>Hamdi</string>
+      </property>
+     </item>
+     <item row="4" column="3">
+      <property name="text">
+       <string>karim.hamdi@email.com</string>
+      </property>
+     </item>
+     <item row="4" column="4">
+      <property name="text">
+       <string>Bizerte, Tunisia</string>
+      </property>
+     </item>
+     <item row="4" column="5">
+      <property name="text">
+       <string>+216 72 998 877</string>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="text">
+       <string>33445566</string>
+      </property>
+     </item>
+     <item row="5" column="1">
+      <property name="text">
+       <string>Sarra</string>
+      </property>
+     </item>
+     <item row="5" column="2">
+      <property name="text">
+       <string>Bouaziz</string>
+      </property>
+     </item>
+     <item row="5" column="3">
+      <property name="text">
+       <string>sarra.bouaziz@email.com</string>
+      </property>
+     </item>
+     <item row="5" column="4">
+      <property name="text">
+       <string>Gabes, Tunisia</string>
+      </property>
+     </item>
+     <item row="5" column="5">
+      <property name="text">
+       <string>+216 75 334 455</string>
+      </property>
+     </item>
     </widget>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QComboBox" name="comboBox_3">
      <property name="geometry">
       <rect>
-       <x>730</x>
-       <y>90</y>
-       <width>121</width>
-       <height>31</height>
+       <x>920</x>
+       <y>60</y>
+       <width>76</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Adress</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string/>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLabel" name="label_23">
+     <property name="geometry">
+      <rect>
+       <x>840</x>
+       <y>60</y>
+       <width>63</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Sort By:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_24">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>70</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 900 9pt &quot;Swis721 Blk BT&quot;;</string>
+     </property>
+     <property name="text">
+      <string>Search for a client:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_27">
+     <property name="geometry">
+      <rect>
+       <x>660</x>
+       <y>60</y>
+       <width>93</width>
+       <height>29</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -608,13 +739,85 @@ QPushButton:pressed { background-color: #002050; }</string>
       <string>Confirm</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_4">
+    <widget class="QPushButton" name="pushButton_28">
      <property name="geometry">
       <rect>
-       <x>600</x>
-       <y>90</y>
-       <width>113</width>
-       <height>28</height>
+       <x>520</x>
+       <y>440</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    background-color: #003271;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+QPushButton:hover { background-color: #004599; }
+QPushButton:pressed { background-color: #002050; }</string>
+     </property>
+     <property name="text">
+      <string>Export to PDF</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_29">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>40</y>
+       <width>121</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    background-color: #003271;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+QPushButton:hover { background-color: #004599; }
+QPushButton:pressed { background-color: #002050; }</string>
+     </property>
+     <property name="text">
+      <string>Add Client</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_30">
+     <property name="geometry">
+      <rect>
+       <x>940</x>
+       <y>410</y>
+       <width>93</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    background-color: #003271;
+    color: white;
+    border-radius: 6px;
+    padding: 6px 12px;
+}
+QPushButton:hover { background-color: #004599; }
+QPushButton:pressed { background-color: #002050; }</string>
+     </property>
+     <property name="text">
+      <string>Delete</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_23">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>60</y>
+       <width>131</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -630,24 +833,42 @@ QPushButton:pressed { background-color: #002050; }</string>
 QLineEdit:focus {
     border: 2px solid #1e6fd9;
     background-color: #ffffff;
-}
-</string>
-     </property>
-     <property name="text">
-      <string/>
+}</string>
      </property>
      <property name="placeholderText">
-      <string>        CIN</string>
+      <string>CIN,Name,Email</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_10">
+    <widget class="QLabel" name="PDF_3">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>160</y>
+       <x>470</x>
+       <y>430</y>
+       <width>41</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap>../../../../Desktop/projetpcc-2a26-voltshop-gestion_client/PDF.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_31">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>140</y>
        <width>31</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
@@ -656,6 +877,7 @@ QLineEdit:focus {
     padding: 8px;
     font-weight: bold;
     color: black;
+    font-size: 12px;
 }
 
 QPushButton:hover {
@@ -674,14 +896,17 @@ QPushButton:pressed {
       <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_11">
+    <widget class="QPushButton" name="pushButton_32">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>190</y>
+       <x>350</x>
+       <y>180</y>
        <width>31</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
@@ -690,6 +915,7 @@ QPushButton:pressed {
     padding: 8px;
     font-weight: bold;
     color: black;
+    font-size: 12px;
 }
 
 QPushButton:hover {
@@ -708,15 +934,94 @@ QPushButton:pressed {
       <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_12">
+    <widget class="QPushButton" name="pushButton_33">
      <property name="geometry">
       <rect>
-       <x>420</x>
+       <x>350</x>
+       <y>300</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgb(173, 216, 230);
+    border-radius: 10px;
+    padding: 8px;
+    font-weight: bold;
+    color: black;
+    font-size: 12px;
+}
+
+QPushButton:hover {
+    background-color: rgb(135, 206, 250); /* un bleu un peu plus clair */
+}
+
+QPushButton:pressed {
+    background-color: rgb(100, 149, 237); /* un bleu un peu plus foncé */
+}
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_34">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>260</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    background-color: rgb(173, 216, 230);
+    border-radius: 10px;
+    padding: 8px;
+    font-weight: bold;
+    color: black;
+    font-size: 12px;
+}
+
+QPushButton:hover {
+    background-color: rgb(135, 206, 250); /* un bleu un peu plus clair */
+}
+
+QPushButton:pressed {
+    background-color: rgb(100, 149, 237); /* un bleu un peu plus foncé */
+}
+</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_35">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
        <y>220</y>
        <width>31</width>
        <height>31</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
+     </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
     background-color: rgb(173, 216, 230);
@@ -724,6 +1029,7 @@ QPushButton:pressed {
     padding: 8px;
     font-weight: bold;
     color: black;
+    font-size: 12px;
 }
 
 QPushButton:hover {
@@ -742,14 +1048,17 @@ QPushButton:pressed {
       <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_13">
+    <widget class="QPushButton" name="pushButton_36">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>250</y>
+       <x>350</x>
+       <y>330</y>
        <width>31</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>Edit this client</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
@@ -758,6 +1067,7 @@ QPushButton:pressed {
     padding: 8px;
     font-weight: bold;
     color: black;
+    font-size: 12px;
 }
 
 QPushButton:hover {
@@ -776,125 +1086,64 @@ QPushButton:pressed {
       <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_14">
+    <widget class="QLineEdit" name="lineEdit_24">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>280</y>
-       <width>31</width>
+       <x>790</x>
+       <y>410</y>
+       <width>131</width>
        <height>31</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: rgb(173, 216, 230);
-    border-radius: 10px;
-    padding: 8px;
-    font-weight: bold;
-    color: black;
+      <string notr="true">QLineEdit {
+    background-color: #f4faff;
+    border: 2px solid #003271;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 14px;
+    color: #000000;
 }
 
-QPushButton:hover {
-    background-color: rgb(135, 206, 250); /* un bleu un peu plus clair */
-}
-
-QPushButton:pressed {
-    background-color: rgb(100, 149, 237); /* un bleu un peu plus foncé */
-}
-</string>
+QLineEdit:focus {
+    border: 2px solid #1e6fd9;
+    background-color: #ffffff;
+}</string>
      </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
+     <property name="placeholderText">
+      <string>          CIN</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_15">
+    <widget class="QPushButton" name="darkmode_button">
      <property name="geometry">
       <rect>
-       <x>420</x>
-       <y>310</y>
-       <width>31</width>
+       <x>20</x>
+       <y>0</y>
+       <width>51</width>
        <height>31</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: rgb(173, 216, 230);
-    border-radius: 10px;
-    padding: 8px;
-    font-weight: bold;
-    color: black;
-}
-
-QPushButton:hover {
-    background-color: rgb(135, 206, 250); /* un bleu un peu plus clair */
-}
-
-QPushButton:pressed {
-    background-color: rgb(100, 149, 237); /* un bleu un peu plus foncé */
-}
-</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton_16">
-     <property name="geometry">
-      <rect>
-       <x>420</x>
-       <y>340</y>
-       <width>31</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QPushButton {
-    background-color: rgb(173, 216, 230);
-    border-radius: 10px;
-    padding: 8px;
-    font-weight: bold;
-    color: black;
-}
-
-QPushButton:hover {
-    background-color: rgb(135, 206, 250); /* un bleu un peu plus clair */
-}
-
-QPushButton:pressed {
-    background-color: rgb(100, 149, 237); /* un bleu un peu plus foncé */
-}
-</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset theme="QIcon::ThemeIcon::MailMessageNew"/>
+      <iconset resource="resources.qrc">
+       <normaloff>:/images/ressource/night-mode.png</normaloff>:/images/ressource/night-mode.png</iconset>
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tab_6">
     <attribute name="title">
-     <string>Statistics</string>
+     <string>Functionality</string>
     </attribute>
-    <widget class="QLabel" name="stat">
+    <widget class="QLabel" name="clientlabel">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>140</x>
        <y>30</y>
-       <width>1070</width>
-       <height>450</height>
+       <width>881</width>
+       <height>441</height>
       </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">border: 2px solid #ADD8E6;
-border-radius: 10px;</string>
      </property>
      <property name="text">
       <string/>

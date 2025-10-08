@@ -18,8 +18,13 @@ public:
     ClientWindow(QWidget *parent = nullptr);
     ~ClientWindow();
 
+private slots:
+    void logout();
+    void toggleDarkMode();
+
 private:
     Ui::ClientWindow *ui;
+    bool isDarkMode = false;
 };
 
 #endif // CLIENTWINDOW_H

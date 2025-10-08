@@ -11,5 +11,9 @@
         <file>ressource/PDF.png</file>
         <file>ressource/EXCEL.png</file>
         <file>ressource/stat.png</file>
+        <file>ressource/night-mode.png</file>
+        <file>ressource/statstock.png</file>
+        <file>ressource/stat2.png</file>
+        <file>ressource/stock.png</file>
     </qresource>
 </RCC>

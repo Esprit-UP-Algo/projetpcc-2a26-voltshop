@@ -3,6 +3,7 @@
 
 
 #include <QMainWindow>
+#include <QTableWidgetItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,10 +25,14 @@ private slots:
     void openClientModule();
     void showPaymentModule();
     void logout();
+    void addPaymentToTable(); // New slot to add payment data to table
+    void toggleDarkMode(); // Dark mode toggle function
 
 private:
     Ui::MainWindow *ui;
     ClientWindow *clientWindow;
+    int paymentIdCounter = 1; // Counter for payment IDs
+    bool isDarkMode = false; // Track dark mode state
 
 };
 #endif // MAINWINDOW_H

@@ -1,0 +1,10 @@
+debug/main.o
+debug/mainwindow.o
+debug/clientwindow.o
+debug/loginwindow.o
+debug/homewidget.o
+debug/qrc_resources.o
+debug/moc_mainwindow.o
+debug/moc_clientwindow.o
+debug/moc_loginwindow.o
+debug/moc_homewidget.o

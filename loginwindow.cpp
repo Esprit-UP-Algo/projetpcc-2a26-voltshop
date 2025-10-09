@@ -69,9 +69,9 @@ void LoginWindow::onCancelClicked()
 
 bool LoginWindow::validateLogin(const QString &username, const QString &password)
 {
-    // Simple hardcoded validation for demo purposes
-    // Replace this with your actual authentication logic
-    if (username == "fathi" && password == "fathi123") {
+    // Simple hardcoded validation with single admin user
+    if (username == "admin" && password == "admin123") {
+        userType = 1; // Admin user
         return true;
     }
     return false;

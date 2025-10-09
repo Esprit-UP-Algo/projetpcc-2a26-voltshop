@@ -124,6 +124,8 @@ debug/qrc_resources.cpp: ../../resources.qrc \
 		../../ressource/icons8-calendar-50.png \
 		../../ressource/logo.jpeg \
 		../../ressource/stat.png \
+		../../ressource/stock.png \
+		../../ressource/night-mode.png \
 		../../ressource/arrow-down.png \
 		../../ressource/credit-card.png \
 		../../ressource/testchart.png
@@ -327,6 +329,24 @@ debug/moc_mainwindow.cpp: ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtCore/qlocale.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/qguiapplication_platform.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabwidget.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidgetItem \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qitemselectionmodel.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyleoption.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractspinbox.h \
+		D:/qt/6.7.3/mingw_64/include/QtGui/qvalidator.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qregularexpression.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qslider.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractslider.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyle.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h \
 		debug/moc_predefs.h \
 		D:/qt/6.7.3/mingw_64/bin/moc.exe
 	D:\qt\6.7.3\mingw_64\bin\moc.exe $(DEFINES) --include "C:/Users/Admin/Documents/QTdesginer projects/gestionPaiment/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/debug/moc_predefs.h" -ID:/qt/6.7.3/mingw_64/mkspecs/win32-g++ -I"C:/Users/Admin/Documents/QTdesginer projects/gestionPaiment" -ID:/qt/6.7.3/mingw_64/include -ID:/qt/6.7.3/mingw_64/include/QtWidgets -ID:/qt/6.7.3/mingw_64/include/QtGui -ID:/qt/6.7.3/mingw_64/include/QtCore -I. -ID:/qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++ -ID:/qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32 -ID:/qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward -ID:/qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include -ID:/qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed -ID:/qt/Tools/mingw1120_64/x86_64-w64-mingw32/include ..\..\mainwindow.h -o debug\moc_mainwindow.cpp
@@ -935,9 +955,30 @@ debug/main.o: ../../main.cpp ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtCore/qlocale.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/qguiapplication_platform.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabwidget.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidgetItem \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qitemselectionmodel.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyleoption.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractspinbox.h \
+		D:/qt/6.7.3/mingw_64/include/QtGui/qvalidator.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qregularexpression.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qslider.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractslider.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyle.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h \
 		../../loginwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QDialog \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qdialog.h \
+		../../clientwindow.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
+		D:/qt/6.7.3/mingw_64/include/QtGui/QPixmap \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o ..\..\main.cpp
@@ -1131,14 +1172,14 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtCore/qlocale.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/qguiapplication_platform.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabwidget.h \
-		ui_mainwindow.h \
-		D:/qt/6.7.3/mingw_64/include/QtCore/QVariant \
-		D:/qt/6.7.3/mingw_64/include/QtGui/QAction \
-		D:/qt/6.7.3/mingw_64/include/QtGui/QIcon \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/QComboBox \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qcombobox.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidgetItem \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemview.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractscrollarea.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/qitemselectionmodel.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyleoption.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractspinbox.h \
@@ -1149,8 +1190,14 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstyle.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
-		D:/qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h \
+		ui_mainwindow.h \
+		D:/qt/6.7.3/mingw_64/include/QtCore/QVariant \
+		D:/qt/6.7.3/mingw_64/include/QtGui/QAction \
+		D:/qt/6.7.3/mingw_64/include/QtGui/QIcon \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QComboBox \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qcombobox.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QDateEdit \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qdatetimeedit.h \
 		D:/qt/6.7.3/mingw_64/include/QtCore/qtimezone.h \
@@ -1160,9 +1207,6 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qgroupbox.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QHeaderView \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qheaderview.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemview.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qabstractscrollarea.h \
-		D:/qt/6.7.3/mingw_64/include/QtCore/qitemselectionmodel.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QLabel \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qlabel.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/qpicture.h \
@@ -1184,8 +1228,6 @@ debug/mainwindow.o: ../../mainwindow.cpp ../../mainwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qstatusbar.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTabWidget \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidget \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
 		../../clientwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/QPixmap \
@@ -1384,6 +1426,7 @@ debug/clientwindow.o: ../../clientwindow.cpp ../../clientwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtGui/QPixmap \
 		ui_clientwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtCore/QVariant \
+		D:/qt/6.7.3/mingw_64/include/QtGui/QIcon \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QGroupBox \
@@ -1422,7 +1465,11 @@ debug/clientwindow.o: ../../clientwindow.cpp ../../clientwindow.h \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTabWidget \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidget \
 		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtablewidget.h \
-		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qtableview.h \
+		../../mainwindow.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QMainWindow \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/qmainwindow.h \
+		D:/qt/6.7.3/mingw_64/include/QtWidgets/QTableWidgetItem
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\clientwindow.o ..\..\clientwindow.cpp
 
 debug/loginwindow.o: ../../loginwindow.cpp ../../loginwindow.h \

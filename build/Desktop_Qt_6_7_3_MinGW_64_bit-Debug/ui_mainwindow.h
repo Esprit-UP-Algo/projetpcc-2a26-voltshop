@@ -53,14 +53,12 @@ public:
     QLabel *label_7;
     QLabel *label_8;
     QPushButton *pushButton_4;
-    QPushButton *pushButton_5;
     QPushButton *pushButton_6;
     QPushButton *pushButton;
     QPushButton *pushButton_7;
     QLineEdit *lineEdit_7;
     QLineEdit *lineEdit_8;
     QLabel *PDF;
-    QLabel *EXCEL;
     QPushButton *pushButton_10;
     QPushButton *pushButton_11;
     QPushButton *pushButton_12;
@@ -71,14 +69,13 @@ public:
     QLabel *stat;
     QGroupBox *groupBox_2;
     QPushButton *pushButton_8;
-    QPushButton *pushButton_9;
+    QPushButton *quit;
     QLabel *logo;
     QLabel *logo2;
     QPushButton *pushButton_16;
     QPushButton *pushButton_17;
     QPushButton *pushButton_18;
     QPushButton *pushButton_19;
-    QLabel *creditcard;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -91,7 +88,7 @@ public:
         centralwidget->setObjectName("centralwidget");
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName("tabWidget");
-        tabWidget->setGeometry(QRect(120, 0, 1131, 541));
+        tabWidget->setGeometry(QRect(200, 0, 1051, 541));
         tabWidget->setStyleSheet(QString::fromUtf8("QTabWidget::pane {\n"
 "    border: 1px solid #00A3E0;\n"
 "    background: #E6F2FA;\n"
@@ -341,7 +338,7 @@ public:
         label_7->setStyleSheet(QString::fromUtf8("font: 900 9pt \"Swis721 Blk BT\";"));
         label_8 = new QLabel(tab);
         label_8->setObjectName("label_8");
-        label_8->setGeometry(QRect(360, 70, 161, 20));
+        label_8->setGeometry(QRect(340, 70, 161, 20));
         label_8->setStyleSheet(QString::fromUtf8("font: 900 9pt \"Swis721 Blk BT\";"));
         pushButton_4 = new QPushButton(tab);
         pushButton_4->setObjectName("pushButton_4");
@@ -355,21 +352,9 @@ public:
 "}\n"
 "QPushButton:hover { background-color: #004599; }\n"
 "QPushButton:pressed { background-color: #002050; }"));
-        pushButton_5 = new QPushButton(tab);
-        pushButton_5->setObjectName("pushButton_5");
-        pushButton_5->setGeometry(QRect(680, 440, 151, 31));
-        pushButton_5->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
-"    color: white;\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 12px;\n"
-"}\n"
-"QPushButton:hover { background-color: #004599; }\n"
-"QPushButton:pressed { background-color: #002050; }"));
         pushButton_6 = new QPushButton(tab);
         pushButton_6->setObjectName("pushButton_6");
-        pushButton_6->setGeometry(QRect(450, 440, 141, 31));
+        pushButton_6->setGeometry(QRect(520, 440, 141, 31));
         pushButton_6->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
 "    background-color: #003271;\n"
@@ -393,7 +378,7 @@ public:
 "QPushButton:pressed { background-color: #002050; }"));
         pushButton_7 = new QPushButton(tab);
         pushButton_7->setObjectName("pushButton_7");
-        pushButton_7->setGeometry(QRect(1020, 440, 93, 29));
+        pushButton_7->setGeometry(QRect(940, 410, 93, 29));
         pushButton_7->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
 "    background-color: #003271;\n"
@@ -405,7 +390,7 @@ public:
 "QPushButton:pressed { background-color: #002050; }"));
         lineEdit_7 = new QLineEdit(tab);
         lineEdit_7->setObjectName("lineEdit_7");
-        lineEdit_7->setGeometry(QRect(530, 60, 111, 31));
+        lineEdit_7->setGeometry(QRect(500, 60, 131, 31));
         lineEdit_7->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
 "    background-color: #f4faff;\n"
 "    border: 2px solid #003271;\n"
@@ -421,7 +406,7 @@ public:
 "}"));
         lineEdit_8 = new QLineEdit(tab);
         lineEdit_8->setObjectName("lineEdit_8");
-        lineEdit_8->setGeometry(QRect(890, 440, 113, 26));
+        lineEdit_8->setGeometry(QRect(810, 410, 113, 26));
         lineEdit_8->setStyleSheet(QString::fromUtf8("QLineEdit {\n"
 "    background-color: #f4faff;\n"
 "    border: 2px solid #003271;\n"
@@ -437,14 +422,9 @@ public:
 "}"));
         PDF = new QLabel(tab);
         PDF->setObjectName("PDF");
-        PDF->setGeometry(QRect(400, 430, 41, 41));
+        PDF->setGeometry(QRect(470, 430, 41, 41));
         PDF->setPixmap(QPixmap(QString::fromUtf8("PDF.png")));
         PDF->setScaledContents(true);
-        EXCEL = new QLabel(tab);
-        EXCEL->setObjectName("EXCEL");
-        EXCEL->setGeometry(QRect(620, 420, 51, 61));
-        EXCEL->setPixmap(QPixmap(QString::fromUtf8("assests/EXEL.png")));
-        EXCEL->setScaledContents(true);
         pushButton_10 = new QPushButton(tab);
         pushButton_10->setObjectName("pushButton_10");
         pushButton_10->setGeometry(QRect(350, 140, 31, 31));
@@ -577,118 +557,107 @@ public:
         tabWidget->addTab(tab_2, QString());
         groupBox_2 = new QGroupBox(centralwidget);
         groupBox_2->setObjectName("groupBox_2");
-        groupBox_2->setGeometry(QRect(0, -10, 121, 541));
+        groupBox_2->setGeometry(QRect(0, -10, 191, 541));
         groupBox_2->setStyleSheet(QString::fromUtf8("background-color: rgb(0, 69, 153);"));
         pushButton_8 = new QPushButton(groupBox_2);
         pushButton_8->setObjectName("pushButton_8");
-        pushButton_8->setGeometry(QRect(10, 100, 101, 61));
+        pushButton_8->setGeometry(QRect(10, 100, 171, 61));
         pushButton_8->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
+"QPushButton:hover { background-color: #5AB4F0;; }\n"
+"QPushButton:pressed { background-color: #5AB4F0; }"));
         QIcon icon1(QIcon::fromTheme(QIcon::ThemeIcon::ContactNew));
         pushButton_8->setIcon(icon1);
         pushButton_8->setIconSize(QSize(50, 50));
-        pushButton_9 = new QPushButton(groupBox_2);
-        pushButton_9->setObjectName("pushButton_9");
-        pushButton_9->setGeometry(QRect(10, 490, 101, 31));
-        pushButton_9->setStyleSheet(QString::fromUtf8("\n"
-"QPushButton {\n"
+        quit = new QPushButton(groupBox_2);
+        quit->setObjectName("quit");
+        quit->setGeometry(QRect(10, 490, 171, 31));
+        quit->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #004599; }\n"
-"QPushButton:pressed { background-color: #002050; }"));
+"QPushButton:hover { background-color: #5AB4F0; }\n"
+"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
         logo = new QLabel(groupBox_2);
         logo->setObjectName("logo");
-        logo->setGeometry(QRect(10, 10, 101, 81));
+        logo->setGeometry(QRect(30, 10, 131, 81));
         logo->setPixmap(QPixmap(QString::fromUtf8("../../Downloads/WhatsApp Image 2025-09-16 at 13.04.56 (1).jpeg")));
         logo->setScaledContents(true);
         logo2 = new QLabel(groupBox_2);
         logo2->setObjectName("logo2");
-        logo2->setGeometry(QRect(10, 10, 101, 81));
+        logo2->setGeometry(QRect(30, 10, 131, 81));
         logo2->setPixmap(QPixmap(QString::fromUtf8("../../Downloads/WhatsApp Image 2025-09-16 at 13.04.56 (1).jpeg")));
         logo2->setScaledContents(true);
         pushButton_16 = new QPushButton(groupBox_2);
         pushButton_16->setObjectName("pushButton_16");
-        pushButton_16->setGeometry(QRect(10, 240, 101, 61));
+        pushButton_16->setGeometry(QRect(10, 240, 171, 61));
         pushButton_16->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
+"QPushButton:hover { background-color: #5AB4F0;; }\n"
+"QPushButton:pressed { background-color: #5AB4F0;; }"));
         QIcon icon2(QIcon::fromTheme(QIcon::ThemeIcon::EditPaste));
         pushButton_16->setIcon(icon2);
         pushButton_16->setIconSize(QSize(50, 50));
         pushButton_17 = new QPushButton(groupBox_2);
         pushButton_17->setObjectName("pushButton_17");
-        pushButton_17->setGeometry(QRect(10, 380, 101, 61));
+        pushButton_17->setGeometry(QRect(10, 380, 171, 61));
         pushButton_17->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
+"QPushButton:hover { background-color: #5AB4F0; }\n"
+"QPushButton:pressed { background-color: #5AB4F0;; }"));
         QIcon icon3(QIcon::fromTheme(QIcon::ThemeIcon::Phone));
         pushButton_17->setIcon(icon3);
         pushButton_17->setIconSize(QSize(50, 50));
         pushButton_18 = new QPushButton(groupBox_2);
         pushButton_18->setObjectName("pushButton_18");
-        pushButton_18->setGeometry(QRect(10, 170, 101, 61));
+        pushButton_18->setGeometry(QRect(10, 170, 171, 61));
         pushButton_18->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
+"QPushButton:hover { background-color: #5AB4F0; }\n"
+"QPushButton:pressed { background-color:#5AB4F0; }"));
         QIcon icon4(QIcon::fromTheme(QIcon::ThemeIcon::NetworkWired));
         pushButton_18->setIcon(icon4);
         pushButton_18->setIconSize(QSize(50, 50));
         pushButton_19 = new QPushButton(groupBox_2);
         pushButton_19->setObjectName("pushButton_19");
-        pushButton_19->setGeometry(QRect(10, 310, 101, 61));
+        pushButton_19->setGeometry(QRect(10, 310, 171, 61));
         pushButton_19->setStyleSheet(QString::fromUtf8("QPushButton {\n"
 "	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
+"    background-color: #2C82C9;\n"
 "    color: white;\n"
 "    border-radius: 6px;\n"
 "    padding: 6px 12px;\n"
 "}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
+"QPushButton:hover { background-color: #5AB4F0; }\n"
+"QPushButton:pressed { background-color:#5AB4F0; }\n"
+""));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8(":/image/assests/creditcard.png"), QSize(), QIcon::Mode::Normal, QIcon::State::Off);
+        pushButton_19->setIcon(icon5);
         pushButton_19->setIconSize(QSize(50, 50));
-        creditcard = new QLabel(groupBox_2);
-        creditcard->setObjectName("creditcard");
-        creditcard->setGeometry(QRect(20, 310, 81, 61));
-        creditcard->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"	font: 900 9pt \"Swis721 Blk BT\";\n"
-"    background-color: #003271;\n"
-"    color: white;\n"
-"    border-radius: 6px;\n"
-"    padding: 6px 12px;\n"
-"}\n"
-"QPushButton:hover { background-color: #002050;; }\n"
-"QPushButton:pressed { background-color: rgb(0, 69, 153);; }"));
-        creditcard->setPixmap(QPixmap(QString::fromUtf8("../../Downloads/credit-card.png")));
-        creditcard->setScaledContents(true);
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
@@ -714,8 +683,8 @@ public:
         label_2->setText(QCoreApplication::translate("MainWindow", "First Name:", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Email:", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Last Name:", nullptr));
-        label_5->setText(QCoreApplication::translate("MainWindow", "Num\303\251ro T\303\251l:", nullptr));
-        label_6->setText(QCoreApplication::translate("MainWindow", "Adresse:", nullptr));
+        label_5->setText(QCoreApplication::translate("MainWindow", "Phone nbr:", nullptr));
+        label_6->setText(QCoreApplication::translate("MainWindow", "Adress:", nullptr));
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "Confirm", nullptr));
         pushButton_3->setText(QCoreApplication::translate("MainWindow", "Cancel", nullptr));
         QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
@@ -735,13 +704,11 @@ public:
         label_7->setText(QCoreApplication::translate("MainWindow", "Sort By:", nullptr));
         label_8->setText(QCoreApplication::translate("MainWindow", "Search for a client:", nullptr));
         pushButton_4->setText(QCoreApplication::translate("MainWindow", "Confirm", nullptr));
-        pushButton_5->setText(QCoreApplication::translate("MainWindow", " Export to EXEL", nullptr));
         pushButton_6->setText(QCoreApplication::translate("MainWindow", "Export to PDF", nullptr));
         pushButton->setText(QCoreApplication::translate("MainWindow", "Add Client", nullptr));
         pushButton_7->setText(QCoreApplication::translate("MainWindow", "Delete", nullptr));
-        lineEdit_7->setPlaceholderText(QCoreApplication::translate("MainWindow", "       CIN", nullptr));
+        lineEdit_7->setPlaceholderText(QCoreApplication::translate("MainWindow", " CIN,Name,Email", nullptr));
         PDF->setText(QString());
-        EXCEL->setText(QString());
         pushButton_10->setText(QString());
         pushButton_11->setText(QString());
         pushButton_12->setText(QString());
@@ -752,15 +719,14 @@ public:
         stat->setText(QString());
         tabWidget->setTabText(tabWidget->indexOf(tab_2), QCoreApplication::translate("MainWindow", "Functionality", nullptr));
         groupBox_2->setTitle(QString());
-        pushButton_8->setText(QString());
-        pushButton_9->setText(QCoreApplication::translate("MainWindow", "LOG OUT", nullptr));
+        pushButton_8->setText(QCoreApplication::translate("MainWindow", "CLIENTS", nullptr));
+        quit->setText(QCoreApplication::translate("MainWindow", "LOG OUT", nullptr));
         logo->setText(QString());
         logo2->setText(QString());
-        pushButton_16->setText(QString());
-        pushButton_17->setText(QString());
-        pushButton_18->setText(QString());
-        pushButton_19->setText(QString());
-        creditcard->setText(QString());
+        pushButton_16->setText(QCoreApplication::translate("MainWindow", "STOCKS", nullptr));
+        pushButton_17->setText(QCoreApplication::translate("MainWindow", "LOCAL", nullptr));
+        pushButton_18->setText(QCoreApplication::translate("MainWindow", "COMMANDS", nullptr));
+        pushButton_19->setText(QCoreApplication::translate("MainWindow", "Transaction", nullptr));
     } // retranslateUi
 
 };

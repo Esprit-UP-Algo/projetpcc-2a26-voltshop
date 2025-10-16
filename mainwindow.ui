@@ -19,7 +19,7 @@
      <rect>
       <x>200</x>
       <y>0</y>
-      <width>1051</width>
+      <width>1121</width>
       <height>541</height>
      </rect>
     </property>
@@ -382,7 +382,7 @@ QPushButton:pressed { background-color: #002050; }</string>
        <rect>
         <x>350</x>
         <y>100</y>
-        <width>681</width>
+        <width>761</width>
         <height>281</height>
        </rect>
       </property>
@@ -1147,7 +1147,7 @@ QLineEdit:focus {
       <x>0</x>
       <y>-10</y>
       <width>191</width>
-      <height>541</height>
+      <height>601</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -1167,14 +1167,24 @@ QLineEdit:focus {
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0;; }
-QPushButton:pressed { background-color: #5AB4F0; }</string>
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Quand un bouton est cliqué et reste actif */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
+</string>
      </property>
      <property name="text">
       <string>CLIENTS</string>
@@ -1188,6 +1198,9 @@ QPushButton:pressed { background-color: #5AB4F0; }</string>
        <height>50</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="quit">
      <property name="geometry">
@@ -1200,17 +1213,30 @@ QPushButton:pressed { background-color: #5AB4F0; }</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0; }
-QPushButton:pressed { background-color: rgb(0, 69, 153);; }</string>
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Sélectionné (le bouton cliqué reste dans cette couleur) */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
+</string>
      </property>
      <property name="text">
       <string>LOG OUT</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
     <widget class="QLabel" name="logo">
@@ -1262,14 +1288,24 @@ QPushButton:pressed { background-color: rgb(0, 69, 153);; }</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0;; }
-QPushButton:pressed { background-color: #5AB4F0;; }</string>
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Quand un bouton est cliqué et reste actif */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
+</string>
      </property>
      <property name="text">
       <string>STOCKS</string>
@@ -1283,6 +1319,9 @@ QPushButton:pressed { background-color: #5AB4F0;; }</string>
        <height>50</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButton_17">
      <property name="geometry">
@@ -1295,14 +1334,24 @@ QPushButton:pressed { background-color: #5AB4F0;; }</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0; }
-QPushButton:pressed { background-color: #5AB4F0;; }</string>
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Quand un bouton est cliqué et reste actif */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
+</string>
      </property>
      <property name="text">
       <string>LOCAL</string>
@@ -1316,6 +1365,9 @@ QPushButton:pressed { background-color: #5AB4F0;; }</string>
        <height>50</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButton_18">
      <property name="geometry">
@@ -1328,14 +1380,24 @@ QPushButton:pressed { background-color: #5AB4F0;; }</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0; }
-QPushButton:pressed { background-color:#5AB4F0; }</string>
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Quand un bouton est cliqué et reste actif */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
+</string>
      </property>
      <property name="text">
       <string>COMMANDS</string>
@@ -1349,6 +1411,9 @@ QPushButton:pressed { background-color:#5AB4F0; }</string>
        <height>50</height>
       </size>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="pushButton_19">
      <property name="geometry">
@@ -1361,14 +1426,23 @@ QPushButton:pressed { background-color:#5AB4F0; }</string>
      </property>
      <property name="styleSheet">
       <string notr="true">QPushButton {
-	font: 900 9pt &quot;Swis721 Blk BT&quot;;
+    font: 900 9pt &quot;Swis721 Blk BT&quot;;
     background-color: #2C82C9;
     color: white;
     border-radius: 6px;
     padding: 6px 12px;
 }
-QPushButton:hover { background-color: #5AB4F0; }
-QPushButton:pressed { background-color:#5AB4F0; }
+
+/* Survol */
+QPushButton:hover {
+    background-color: #5AB4F0;
+}
+
+/* Quand un bouton est cliqué et reste actif */
+QPushButton:checked {
+    background-color: #004C8C; /* Couleur plus foncée */
+    border: 2px solid white;
+}
 </string>
      </property>
      <property name="text">
@@ -1383,6 +1457,9 @@ QPushButton:pressed { background-color:#5AB4F0; }
        <width>50</width>
        <height>50</height>
       </size>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
      </property>
     </widget>
    </widget>

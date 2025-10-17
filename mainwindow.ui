@@ -817,7 +817,7 @@ QPushButton:pressed { background-color:#5AB4F0; }
       <string>Transaction</string>
      </property>
      <property name="icon">
-      <iconset resource="../2eme esprit/projet/gestionclient/gestionclient/ressource.qrc">
+      <iconset>
        <normaloff>:/image/assests/creditcard.png</normaloff>:/image/assests/creditcard.png</iconset>
      </property>
      <property name="iconSize">
@@ -841,8 +841,6 @@ QPushButton:pressed { background-color:#5AB4F0; }
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources>
-  <include location="../2eme esprit/projet/gestionclient/gestionclient/ressource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

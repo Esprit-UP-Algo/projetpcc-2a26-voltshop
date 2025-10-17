@@ -3,7 +3,7 @@
 #include <QPixmap>
 #include <QFile>
 #include <QDebug>
-
+#include "connection.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)

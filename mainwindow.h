@@ -120,6 +120,7 @@ private:
     void sauvegarderClients(const QString &code, const QString &client);  // Sauvegarde JSON
     void chargerClientsComboBox();
     void  chargerClientsFichier();    // Lecture JSON
+    void mettreAJourComboBoxClients();
 
 ///////////////////
     void afficherTransactions();

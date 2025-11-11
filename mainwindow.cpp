@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     chargerClientsFichier();  // 🔹 Charge la map depuis clients.json
     chargerClientsComboBox(); // 🔹 Remplit la comboBox avec les clients existants
     afficherCommandes();      // 🔹 Affiche les commandes avec la colonne client
-
+    mettreAJourComboBoxClients();
 
 
 
@@ -726,6 +726,7 @@ void MainWindow::addClientEditPenForRow(int row)
     lay->setAlignment(Qt::AlignCenter);
     lay->addWidget(editBtn);
     ui->tab_Client->setCellWidget(row, 0, cell);
+    mettreAJourComboBoxClients(); // ✅ mettre à jour la combo du tab commande
 }
 
 void MainWindow::on_c_confirm_clicked()
@@ -755,6 +756,7 @@ void MainWindow::on_c_confirm_clicked()
     }
     refreshClientsGrid();
     setClientFormMode(false);
+    mettreAJourComboBoxClients(); //  mettre à jour la combo du tab client
 }
 
 void MainWindow::on_c_delete_clicked()
@@ -766,6 +768,7 @@ void MainWindow::on_c_delete_clicked()
     if (QMessageBox::question(this,"Confirmer",
                               QString("Supprimer le client %1 ?").arg(cin)) != QMessageBox::Yes) return;
     if (client_dao::remove(cin)) refreshClientsGrid();
+    mettreAJourComboBoxClients(); // ✅ mettre à jour la combo du tab commande
 }
 
 void MainWindow::on_c_DEL_clicked()
@@ -776,6 +779,7 @@ void MainWindow::on_c_DEL_clicked()
                               QString("Supprimer le client %1 ?").arg(cin)) != QMessageBox::Yes) return;
     if (client_dao::remove(cin)) refreshClientsGrid();
     ui->c_Line_rech->clear();
+    mettreAJourComboBoxClients(); // ✅ mettre à jour la combo
 }
 void MainWindow::on_tab_Art_cellChanged(int, int) { }
 
@@ -1484,7 +1488,17 @@ void MainWindow::sauvegarderClients(const QString &code, const QString &client)
     qDebug() << "✅ Client sauvegardé dans JSON:" << code << "→" << client;
 }
 
+void MainWindow::mettreAJourComboBoxClients()
+{
+    ui->comboBox_client->clear();
 
+    QSqlQuery query("SELECT FIRST_NAME, LAST_NAME FROM TAB_CLIENT");
+
+    while (query.next()) {
+        QString nomComplet = query.value(0).toString() + " " + query.value(1).toString();
+        ui->comboBox_client->addItem(nomComplet);
+    }
+}
 
 
 

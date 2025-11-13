@@ -67,6 +67,7 @@ private slots:
     void on_pushButton_25_clicked();
     void on_pushButton_28_clicked();
     void on_pushButton_27_clicked();
+    void on_lineEdit_17_textChanged(const QString &arg1);
 
     // ====== EMPLOYEES ======
     void on_confirmb_clicked();   // Confirm Add button
@@ -114,7 +115,7 @@ private:
     int selectedRow = -1;
     bool validerChamps(QString code, QDate date, QString produits, double total, QString statut,QString client);
 
-    void on_pushButton_exportPDF_clicked();
+    void on_pushButton_exportpdf_clicked();
     QMap<QString, QString> clientsMap; // Associe code_commande → client
 
     void sauvegarderClients(const QString &code, const QString &client);  // Sauvegarde JSON

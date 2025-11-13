@@ -25,6 +25,14 @@
 #include <QFileDialog>
 #include <QPdfWriter>
 #include <QPainter>
+#include <QPageLayout>
+#include <QFont>
+#include <QPageSize>
+#include <QPainter>
+#include <QPrinter>
+#include <QTextTable>
+
+
 
 #include <QDesktopServices>
 #include <QUrl>
@@ -61,10 +69,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableauCommande->setSelectionBehavior(QAbstractItemView::SelectRows);   // Sélectionne toute la ligne
     ui->tableauCommande->setMouseTracking(true);                                // Active le hover
     rafraichirTableau();
-    chargerClientsFichier();  // 🔹 Charge la map depuis clients.json
-    chargerClientsComboBox(); // 🔹 Remplit la comboBox avec les clients existants
-    afficherCommandes();      // 🔹 Affiche les commandes avec la colonne client
+    chargerClientsFichier();  //  Charge la map depuis clients.json
+    chargerClientsComboBox(); //  Remplit la comboBox avec les clients existants
+    afficherCommandes();      //  Affiche les commandes avec la colonne client
     mettreAJourComboBoxClients();
+
+    connect(ui->comboBox_trie, &QComboBox::currentTextChanged, this, &MainWindow::trierCommandes);
+    connect(ui->pushButton_exportpdf, &QPushButton::clicked, this, &MainWindow::exporterPDFCommandes);
 
 
 
@@ -1100,14 +1111,19 @@ void MainWindow::rafraichirTableau()
 
         // 🔹 colonnes exactes selon ta table SQL
         QString code = model->data(model->index(i, 0)).toString();
-        QString date = model->data(model->index(i, 1)).toString();
+
         QString produits = model->data(model->index(i, 2)).toString();
         QString total = model->data(model->index(i, 3)).toString();
         QString statut = model->data(model->index(i, 4)).toString();
         QString client = clientsMap.value(code, "—");  // récup client depuis JSON
 
+        QDateTime dateTime = model->data(model->index(i, 1)).toDateTime();
+        QString dateStr = dateTime.date().toString("yyyy-MM-dd");
+        ui->tableauCommande->setItem(i, 1, new QTableWidgetItem(dateStr));
+
+
         ui->tableauCommande->setItem(i, 0, new QTableWidgetItem(code));
-        ui->tableauCommande->setItem(i, 1, new QTableWidgetItem(date));
+
         ui->tableauCommande->setItem(i, 2, new QTableWidgetItem(produits));
         ui->tableauCommande->setItem(i, 3, new QTableWidgetItem(total));
         ui->tableauCommande->setItem(i, 4, new QTableWidgetItem(statut));
@@ -1327,9 +1343,18 @@ void MainWindow::afficherCommandes()
 
         for (int j = 0; j < colonnesBD; ++j)
         {
-            QString data = model->data(model->index(i, j)).toString();
+            QString data;
+
+            if (j == 1) { // colonne date
+                QDateTime dateTime = model->data(model->index(i, j)).toDateTime();
+                data = dateTime.date().toString("yyyy-MM-dd");
+            } else {
+                data = model->data(model->index(i, j)).toString();
+            }
+
             ui->tableauCommande->setItem(i, j, new QTableWidgetItem(data));
         }
+
 
         // 🔹 Récupération du nom du client depuis le fichier JSON
         QString client = clientsMap.value(code, "—"); // “—” si non trouvé
@@ -1502,25 +1527,176 @@ void MainWindow::mettreAJourComboBoxClients()
 
 
 
-void MainWindow::on_pushButton_exportPDF_clicked()
+
+void MainWindow::trierCommandes(const QString &critere)
 {
-    QString filePath = QFileDialog::getSaveFileName(this, "Exporter en PDF", "", "Fichiers PDF (*.pdf)");
-    if (filePath.isEmpty()) return;
+    int colonneStatus = 4; // adapte selon ta table
+    int colonneDate = 1;
 
-    QPdfWriter pdfWriter(filePath);
-    pdfWriter.setPageSize(QPageSize(QPageSize::A4));
-    pdfWriter.setPageOrientation(QPageLayout::Portrait);
-    pdfWriter.setPageMargins(QMarginsF(15, 15, 15, 15));
+    QList<QList<QString>> lignes;
 
-    QPainter painter(&pdfWriter);
-    if (!painter.isActive()) {
-        QMessageBox::warning(this, "Erreur", "Impossible de créer le fichier PDF !");
+    // Récupère toutes les lignes
+    for (int i = 0; i < ui->tableauCommande->rowCount(); ++i) {
+        QList<QString> rowData;
+        for (int j = 0; j < ui->tableauCommande->columnCount(); ++j)
+            rowData.append(ui->tableauCommande->item(i, j)->text());
+        lignes.append(rowData);
+    }
+
+    if (critere == "status") {
+        QStringList ordre = {"pending", "in progress", "delivered", "cancelled"};
+        std::sort(lignes.begin(), lignes.end(), [&](const QList<QString> &a, const QList<QString> &b) {
+            int i1 = ordre.indexOf(a[colonneStatus].toLower());
+            int i2 = ordre.indexOf(b[colonneStatus].toLower());
+            if (i1 == -1) i1 = ordre.size();
+            if (i2 == -1) i2 = ordre.size();
+            return i1 < i2;
+        });
+    }
+    else if (critere == "date") {
+        std::sort(lignes.begin(), lignes.end(), [&](const QList<QString> &a, const QList<QString> &b) {
+            QDate d1 = QDate::fromString(a[colonneDate], "yyyy-MM-dd");
+            QDate d2 = QDate::fromString(b[colonneDate], "yyyy-MM-dd");
+            return d1 > d2; // tri décroissant
+        });
+    }
+
+    // Réécrire le tableau trié
+    ui->tableauCommande->setRowCount(0);
+    for (const auto &row : lignes) {
+        int r = ui->tableauCommande->rowCount();
+        ui->tableauCommande->insertRow(r);
+        for (int j = 0; j < row.size(); ++j)
+            ui->tableauCommande->setItem(r, j, new QTableWidgetItem(row[j]));
+    }
+}
+
+// 🟢 Quand on clique sur le bouton Search
+void MainWindow::on_pushButton_search_clicked()
+{
+    QString searchText = ui->lineEdit_search->text().trimmed().toLower();
+    bool found = false;
+
+    if (searchText.isEmpty()) {
+        QMessageBox::information(this, "Search", "Please enter a code or client to search.");
         return;
     }
 
-    painter.setFont(QFont("Arial", 12));
-    painter.drawText(100, 100, "Test export PDF réussi !");
-    painter.end();
+    for (int i = 0; i < ui->tableauCommande->rowCount(); ++i) {
+        QString code = ui->tableauCommande->item(i, 0)->text().toLower();
+        QString client = ui->tableauCommande->item(i, 5)->text().toLower();
 
-    QMessageBox::information(this, "Succès", "PDF créé avec succès !");
+        bool match = code.contains(searchText) || client.contains(searchText);
+        ui->tableauCommande->setRowHidden(i, !match);
+
+        if (match)
+            found = true;
+    }
+
+    if (!found) {
+        QMessageBox::warning(this, "Search", "⚠️ Order not found!");
+    }
+}
+
+// 🔄 Quand on efface le texte → tout réafficher automatiquement
+void MainWindow::on_lineEdit_search_textChanged(const QString &text)
+{
+    if (text.trimmed().isEmpty()) {
+        for (int i = 0; i < ui->tableauCommande->rowCount(); ++i)
+            ui->tableauCommande->setRowHidden(i, false);
+    }
+}
+
+
+void MainWindow::exporterPDFCommandes()
+{
+    QWidget* parent = this;
+
+    QString fileName = QFileDialog::getSaveFileName(parent,
+                                                    "Export order list as PDF",
+                                                    QDir::homePath() + "/order_list.pdf",
+                                                    "PDF Files (*.pdf)");
+
+    if (fileName.isEmpty()) return;
+    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive))
+        fileName += ".pdf";
+
+    QTextDocument document;
+    QTextCursor cursor(&document);
+
+    // --- Main title ---
+    QTextCharFormat titleFormat;
+    titleFormat.setFontPointSize(18);
+    titleFormat.setFontWeight(QFont::Bold);
+    titleFormat.setForeground(Qt::darkBlue);
+    cursor.insertText("Order List – VOTSHOP\n", titleFormat);
+
+    // --- Export date ---
+    cursor.insertText("\nDate: " + QDate::currentDate().toString("dd/MM/yyyy") + "\n\n");
+
+    // --- Table format ---
+    QTextTableFormat tableFormat;
+    tableFormat.setHeaderRowCount(1);
+    tableFormat.setBorder(0.8);
+    tableFormat.setCellPadding(6);
+    tableFormat.setCellSpacing(0);
+    tableFormat.setAlignment(Qt::AlignCenter);
+    tableFormat.setWidth(QTextLength(QTextLength::PercentageLength, 100));
+
+    int rowCount = ui->tableauCommande->rowCount();
+    int colCount = ui->tableauCommande->columnCount();
+
+    QTextTable* table = cursor.insertTable(rowCount + 1, colCount, tableFormat);
+
+    // --- Header row ---
+    QTextCharFormat headerFormat;
+    headerFormat.setFontWeight(QFont::Bold);
+    headerFormat.setBackground(QBrush(QColor("#E0E0E0"))); // light gray
+    headerFormat.setFontPointSize(11);
+
+    for (int c = 0; c < colCount; ++c)
+    {
+        QString headerText = ui->tableauCommande->horizontalHeaderItem(c)->text();
+        QTextCursor cellCursor = table->cellAt(0, c).firstCursorPosition();
+        cellCursor.setCharFormat(headerFormat);
+        cellCursor.insertText(headerText);
+    }
+
+    // --- Table content ---
+    for (int r = 0; r < rowCount; ++r)
+    {
+        for (int c = 0; c < colCount; ++c)
+        {
+            QTableWidgetItem* item = ui->tableauCommande->item(r, c);
+            if (!item) continue;
+
+            QString text = item->text();
+
+            // 🔹 If the column is "Date", remove the time part
+            if (ui->tableauCommande->horizontalHeaderItem(c)->text().contains("Date", Qt::CaseInsensitive))
+            {
+                QDateTime dateTime = QDateTime::fromString(text, Qt::ISODate);
+                if (dateTime.isValid())
+                    text = dateTime.date().toString("dd/MM/yyyy");
+                else if (text.contains(" "))
+                    text = text.split(" ").first();
+            }
+
+            table->cellAt(r + 1, c).firstCursorPosition().insertText(text);
+        }
+    }
+
+    // --- Footer ---
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertText("\n\nDocument automatically generated by VOLTSHOP", QTextCharFormat());
+
+    // --- Print / Save as PDF ---
+    QPrinter printer;
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+
+    document.print(&printer);
+
+    QMessageBox::information(parent, "Export Successful 🎉",
+                             "The PDF file has been successfully saved at:\n" + fileName);
 }

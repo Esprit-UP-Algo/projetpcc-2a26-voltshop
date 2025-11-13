@@ -1,33 +1,27 @@
-#include "mainwindow.h"
-#include "loginwindow.h"
-#include "clientwindow.h"
-
 #include <QApplication>
+#include "login.h"
+#include "connection.h"
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    
-    // Show login dialog first
-    LoginWindow login;
-    if (login.exec() == QDialog::Accepted) {
-        // Login successful, check user type and show appropriate window
-        int userType = login.getUserType();
-        
-        if (userType == 1) {
-            // Admin user (fathi) - show payment module
-            MainWindow w;
-            w.show();
-            return a.exec();
-        }
-        else if (userType == 2) {
-            // Client manager (nada) - show client module
-            ClientWindow c;
-            c.show();
-            return a.exec();
-        }
+
+    // Récupération de l'instance unique de connexion
+    Connection& c = Connection::getInstance();
+
+    // Tentative d'ouverture
+    if (!c.openConnection()) {
+        QMessageBox::critical(nullptr, "Erreur de connexion",
+                              "Impossible de se connecter à Oracle.\n"
+                              "Vérifie ODBC (DSN), identifiants et services Oracle.");
+        return 1;
     }
-    
-    // Login cancelled or failed, exit application
-    return 0;
+
+
+    // Lancer ton interface de login
+    Login login;
+    login.show();
+
+    return a.exec();
 }

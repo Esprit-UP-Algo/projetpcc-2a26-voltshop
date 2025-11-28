@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 QT += core gui widgets sql quick printsupport charts multimedia multimediawidgets
 
 CONFIG += c++17
@@ -17,6 +18,27 @@ SOURCES += \
     client_dao.cpp \
     commande.cpp \
     face_recognition.cpp \
+=======
+QT       += core gui sql \
+    quick
+
+QT += printsupport
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 5): QT += charts
+
+CONFIG += c++17
+
+# You can make your code fail to compile if it uses deprecated APIs.
+# In order to do so, uncomment the following line.
+#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+
+SOURCES += \
+    Login.cpp \
+    article_dao.cpp \
+    client_dao.cpp \
+    commande.cpp \
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     gestion_employee.cpp \
     transaction.cpp \
     piechartwidget.cpp \
@@ -24,6 +46,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp
 
+<<<<<<< HEAD
 # ==========================
 # HEADERS
 # ==========================
@@ -35,12 +58,20 @@ HEADERS += \
     client_dao.h \
     commande.h \
     face_recognition.h \
+=======
+HEADERS += \
+    Login.h \
+    article_dao.h \
+    client_dao.h \
+    commande.h \
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     gestion_employee.h \
     piechartwidget.h \
     transaction.h \
     connection.h \
     mainwindow.h
 
+<<<<<<< HEAD
 # ==========================
 # FORMS
 # ==========================
@@ -77,3 +108,16 @@ LIBS += -L$$OPENCV_PATH/x64/mingw/bin \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+=======
+FORMS += \
+    Login.ui \
+    mainwindow.ui
+
+# Default rules for deployment.
+qnx: target.path = /tmp/$${TARGET}/bin
+else: unix:!android: target.path = /opt/$${TARGET}/bin
+!isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94

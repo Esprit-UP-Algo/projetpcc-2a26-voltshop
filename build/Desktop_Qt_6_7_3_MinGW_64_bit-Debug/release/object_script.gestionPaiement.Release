@@ -1,0 +1,12 @@
+release/CommandeWindow.o
+release/StockWindow.o
+release/main.o
+release/mainwindow.o
+release/clientwindow.o
+release/loginwindow.o
+release/qrc_resources.o
+release/moc_CommandeWindow.o
+release/moc_StockWindow.o
+release/moc_mainwindow.o
+release/moc_clientwindow.o
+release/moc_loginwindow.o

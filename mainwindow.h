@@ -68,10 +68,18 @@
         void on_lineEdit_search_textChanged(const QString &text);
 
 
+<<<<<<< HEAD
         // ====== TRANSACTIONS ======
         void on_pushButton_25_clicked();
         void on_pushButton_28_clicked();
         void on_pushButton_27_clicked();
+=======
+    // ====== TRANSACTIONS ======
+    void on_pushButton_25_clicked();
+    void on_pushButton_28_clicked();
+    void on_pushButton_27_clicked();
+    void on_lineEdit_17_textChanged(const QString &arg1);
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
         // ====== EMPLOYEES ======
         void on_confirmb_clicked();   // Confirm Add button
@@ -124,7 +132,12 @@
         bool validerChamps(QString code, QDate date, QString produits, double total, QString statut,QString client);
         void exporterPDFCommandes();
 
+<<<<<<< HEAD
         QMap<QString, QString> clientsMap; // Associe code_commande → client
+=======
+    void on_pushButton_exportpdf_clicked();
+    QMap<QString, QString> clientsMap; // Associe code_commande → client
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
         void sauvegarderClients(const QString &code, const QString &client);  // Sauvegarde JSON
         void chargerClientsComboBox();

@@ -41,9 +41,12 @@ public:
 
     // Get all employees (read-only access)
     const std::vector<Employee>& getAll() const { return employees; }
+<<<<<<< HEAD
 
     // Get sorted copy of employees (does not modify original)
     std::vector<Employee> getSorted(const std::string& field) const;
+=======
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 };
 
 #endif // GESTION_EMPLOYEE_H

@@ -153,6 +153,9 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         if (y > legendRect.bottom() - 20) break; // avoid overflow
     }
 }
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94

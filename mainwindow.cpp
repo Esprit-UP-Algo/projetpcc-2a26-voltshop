@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "commande.h"
+#include <QRegularExpressionValidator>
 #include <QSqlQuery>
 #include "transaction.h"
 #include <QHeaderView>
@@ -30,6 +31,7 @@
 #include <QPageSize>
 #include <QPainter>
 #include <QPrinter>
+<<<<<<< HEAD
 #include <QTextTable>
 #include <QtCharts/QPieSeries>
 #include <QtCharts/QPieSlice>
@@ -48,10 +50,28 @@
 #include "face_recognition.h"
 #include "chatbotdialog.h"
 
+=======
+#include"client_dao.h"
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 #include <QDesktopServices>
 #include <QUrl>
 #include <QImage>
 
+// ✅ AJOUTS pour validations/combos
+#include <QIntValidator>
+#include <QDoubleValidator>
+#include <QRegularExpression>
+#include <QComboBox>
+#include <QLineEdit>
+#include <climits>
+
+static inline bool isPlaceholderSelected(QComboBox* box, const QString& placeholder)
+{
+    if (!box) return true;
+    const int idx = box->currentIndex();
+    const QString t = box->currentText().trimmed();
+    return (idx <= 0) || t.isEmpty() || t.compare(placeholder, Qt::CaseInsensitive) == 0;
+}
 
 bool editing = false;
 int editingCode = -1;
@@ -95,9 +115,13 @@ MainWindow::MainWindow(QWidget *parent)
     chargerClientsComboBox();
     afficherCommandes();
     mettreAJourComboBoxClients();
+<<<<<<< HEAD
 
     connect(ui->comboBox_trie, &QComboBox::currentTextChanged, this, &MainWindow::trierCommandes);
     connect(ui->pushButton_exportpdf, &QPushButton::clicked, this, &MainWindow::exporterPDFCommandes);
+=======
+    connect(ui->pushButton_exportpdf, &QPushButton::clicked, this, &MainWindow::on_pushButton_exportpdf_clicked);
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
     // ----- MENU -----
     connect(ui->btn_Client,      &QPushButton::clicked, this, &MainWindow::showSClient);
@@ -131,7 +155,276 @@ MainWindow::MainWindow(QWidget *parent)
     if (ui->comboBoxsort) {
         connect(ui->comboBoxsort, &QComboBox::currentTextChanged, this, &MainWindow::afficherTransactionsSorted);
     }
+    // If a sort-order control exists, re-run the sort when it changes
+    if (ui->comboBoxSortOrder) {
+        connect(ui->comboBoxSortOrder, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int) {
+            // reapply current sort selection
+            if (ui->comboBoxsort) afficherTransactionsSorted(ui->comboBoxsort->currentText());
+        });
+    }
+
+    // =========================================================
+    // 🔒 VALIDATEURS & PLACEHOLDERS (bloque clavier)
+    // =========================================================
+    // SKU (formulaire CRUD) : entier strictement positif
+    if (ui->sku) {
+        auto *vsku = new QIntValidator(1, INT_MAX, this);
+        ui->sku->setValidator(vsku);
+
+        connect(ui->sku, &QLineEdit::editingFinished, this, [this]() {
+            bool ok = false;
+            const int val = ui->sku->text().trimmed().toInt(&ok);
+            if (!ok || val <= 0) {
+                QMessageBox::warning(this, "Validation", "SKU must be a strictly positive integer.");
+                ui->sku->setFocus();
+                ui->sku->selectAll();
+            }
+        });
+    }
+
+    // SKU_2 (RECHERCHE seulement) : entier strictement positif
+    if (ui->sku_2) {
+        auto *v = new QIntValidator(1, INT_MAX, this);   // ← bloque lettres/signes, interdit <= 0
+        ui->sku_2->setValidator(v);
+
+        connect(ui->sku_2, &QLineEdit::editingFinished, this, [this]() {
+            const QString txt = ui->sku_2->text().trimmed();
+            if (txt.isEmpty()) {
+                // vide = pas de recherche, pas d'erreur
+                return;
+            }
+            bool ok = false;
+            const int val = txt.toInt(&ok);
+            if (!ok || val <= 0) {
+                QMessageBox::warning(this, "Validation", "SKU must be a strictly positive integer.");
+                ui->sku_2->setFocus();
+                ui->sku_2->selectAll();
+            }
+        });
+    }
+
+    // STOCK : entier strictement positif
+    {
+        auto *v = new QIntValidator(1, INT_MAX, this);
+        ui->stock->setValidator(v);
+    }
+    // PURCHASE PRICE : réel strictement positif
+    {
+        auto *v = new QDoubleValidator(0.000001, 1e12, 6, this);
+        v->setNotation(QDoubleValidator::StandardNotation);
+        ui->price1->setValidator(v);
+    }
+    // SELLING PRICE : réel strictement positif
+    {
+        auto *v = new QDoubleValidator(0.000001, 1e12, 6, this);
+        v->setNotation(QDoubleValidator::StandardNotation);
+        ui->price2->setValidator(v);
+    }
+
+    // BRAND : s'assurer d'un placeholder unique
+    {
+        if (ui->brand) {
+            if (ui->brand->findText("Select the brand", Qt::MatchFixedString) == -1)
+                ui->brand->insertItem(0, "Select the brand");
+            ui->brand->setCurrentIndex(0);
+        }
+    }
+
+    // CATEGORY : supporter QComboBox (recommandé) ou fallback QLineEdit existant
+    {
+        QComboBox *catCombo = nullptr;
+
+        if (auto *asCombo = qobject_cast<QComboBox*>(ui->cat)) {
+            catCombo = asCombo;
+        } else {
+            catCombo = this->findChild<QComboBox*>("cat");
+            if (!catCombo) catCombo = this->findChild<QComboBox*>("catBox");
+        }
+
+        if (catCombo) {
+            if (catCombo->findText("Select the category", Qt::MatchFixedString) == -1)
+                catCombo->insertItem(0, "Select the category");
+            catCombo->setCurrentIndex(0);
+        }
+    }
+
+    // =========================================================
+    // ✅ RECHERCHE COMBINÉE ARTICLES : SKU_2 + Brand rech_Bra
+    // =========================================================
+    auto tryArticleSearch = [this]()
+    {
+        if (!ui || !ui->tab_Art || !ui->sku_2 || !ui->rech_Bra) return;
+
+        // SKU_2 : entier strictement positif
+        const QString skuText = ui->sku_2->text().trimmed();
+        bool okSku = false;
+        const int skuVal = skuText.toInt(&okSku);
+        if (!okSku || skuVal <= 0) {
+            // pas valide → on affiche tout
+            refreshArticlesGrid();
+            return;
+        }
+
+        // Brand de recherche
+        const int brandIdx = ui->rech_Bra->currentIndex();
+        const QString brandTxt = ui->rech_Bra->currentText().trimmed();
+        if (brandIdx < 0 || brandTxt.isEmpty() ||
+            brandTxt.compare("Select the brand", Qt::CaseInsensitive) == 0) {
+            refreshArticlesGrid();
+            return;
+        }
+
+        // Filtrer les articles
+        const auto rows = article_dao::fetchAll();
+        QVector<Article> filtered;
+        filtered.reserve(rows.size());
+        for (const auto& a : rows) {
+            if (a.SKU == skuVal && a.BRAND.compare(brandTxt, Qt::CaseInsensitive) == 0) {
+                filtered.push_back(a);
+            }
+        }
+
+        // Afficher résultats filtrés
+        ui->tab_Art->setRowCount(0);
+        for (int i = 0; i < filtered.size(); ++i) {
+            const auto &a = filtered[i];
+            ui->tab_Art->insertRow(i);
+            ui->tab_Art->setItem(i,1, new QTableWidgetItem(QString::number(a.SKU)));
+            ui->tab_Art->setItem(i,2, new QTableWidgetItem(a.NAME));
+            ui->tab_Art->setItem(i,3, new QTableWidgetItem(a.CATEGORY));
+            ui->tab_Art->setItem(i,4, new QTableWidgetItem(a.BRAND));
+            ui->tab_Art->setItem(i,5, new QTableWidgetItem(QString::number(a.PURCHASEPRICE)));
+            ui->tab_Art->setItem(i,6, new QTableWidgetItem(QString::number(a.SELLINGPRICE)));
+            ui->tab_Art->setItem(i,7, new QTableWidgetItem(QString::number(a.STOCK)));
+            ui->tab_Art->setItem(i,8, new QTableWidgetItem(a.LOCATION));
+            ui->tab_Art->setItem(i,9, new QTableWidgetItem(a.COMPATIBILITY));
+            addActionButtonsForRow(i); // ✎
+        }
+    };
+
+    if (ui->sku_2) {
+        connect(ui->sku_2, &QLineEdit::textChanged, this, [tryArticleSearch](const QString&){ tryArticleSearch(); });
+    }
+    if (ui->rech_Bra) {
+        connect(ui->rech_Bra, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, [tryArticleSearch](int){ tryArticleSearch(); });
+    }
+    // ================================================
+    // 🔒 CLIENTS — VALIDATORS (block keyboard inputs)
+    // ================================================
+    if (ui->c_cin) {
+        auto *v = new QIntValidator(0, 99999999, this);   // block letters
+        ui->c_cin->setValidator(v);
+    }
+    if (ui->c_phone) {
+        auto *v = new QIntValidator(0, 99999999, this);   // block letters
+        ui->c_phone->setValidator(v);
+    }
+
+    // Email strict: email@example.com
+    // Email strict: email@example.com
+    if (ui->c_email) {
+        QRegularExpression rx(R"(^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$)");
+        auto *emailVal = new QRegularExpressionValidator(rx, this);
+        ui->c_email->setValidator(emailVal);
+    }
+
+
+    // ------------------------------------------------
+    // 🔍 Recherche dynamique dans clients
+    // ------------------------------------------------
+    connect(ui->rech, &QLineEdit::textChanged, this, [this](const QString &text){
+        QString key = text.trimmed();
+
+        if (key.isEmpty()) {
+            refreshClientsGrid();
+            return;
+        }
+
+        const auto rows = client_dao::fetchAll();
+        ui->tab_Client->setRowCount(0);
+
+        for (const auto &c : rows) {
+            if (c.CIN.startsWith(key, Qt::CaseInsensitive) ||
+                c.FIRST_NAME.startsWith(key, Qt::CaseInsensitive) ||
+                c.EMAIL.startsWith(key, Qt::CaseInsensitive)) {
+
+                int row = ui->tab_Client->rowCount();
+                ui->tab_Client->insertRow(row);
+
+                ui->tab_Client->setItem(row,1, new QTableWidgetItem(c.CIN));
+                ui->tab_Client->setItem(row,2, new QTableWidgetItem(c.FIRST_NAME));
+                ui->tab_Client->setItem(row,3, new QTableWidgetItem(c.LAST_NAME));
+                ui->tab_Client->setItem(row,4, new QTableWidgetItem(c.EMAIL));
+                ui->tab_Client->setItem(row,5, new QTableWidgetItem(c.PHONE_NBR));
+                ui->tab_Client->setItem(row,6, new QTableWidgetItem(c.ADRESS));
+                addClientEditPenForRow(row);
+            }
+        }
+    });
+
+    // ------------------------------------------------
+    // 🔡 TRI Clients (QComboBox sort: First name / Adress)
+    // ------------------------------------------------
+    connect(ui->sort, &QComboBox::currentTextChanged, this, [this](const QString &crit){
+        if (crit.compare("name", Qt::CaseInsensitive) == 0)
+            ui->tab_Client->sortItems(2, Qt::AscendingOrder);
+        else if (crit.compare("Adress", Qt::CaseInsensitive) == 0)
+            ui->tab_Client->sortItems(6, Qt::AscendingOrder);
+    });
+
+
+    // =========================================================
+    // ✅ TRI ARTICLES : rech_tri (PurchasePrice / SellingPrice / Sort by)
+    // =========================================================
+    if (ui->rech_tri) {
+        connect(ui->rech_tri, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this, [this](int){
+                    if (!ui || !ui->tab_Art || !ui->rech_tri) return;
+
+                    const QString crit = ui->rech_tri->currentText().trimmed();
+
+                    // "Sort by" → revenir à l'état initial
+                    if (crit.isEmpty() ||
+                        crit.compare("Sort by", Qt::CaseInsensitive) == 0)
+                    {
+                        refreshArticlesGrid();
+                        return;
+                    }
+
+                    int col = -1;
+
+                    // Purchase price
+                    if (crit.compare("Purchase price", Qt::CaseInsensitive) == 0 ||
+                        crit.compare("purchaseprice", Qt::CaseInsensitive) == 0 ||
+                        crit.compare("PURCHASEPRICE", Qt::CaseInsensitive) == 0)
+                    {
+                        col = 5; // colonne Purchase Price
+                    }
+                    // Selling price
+                    else if (crit.compare("Selling price", Qt::CaseInsensitive) == 0 ||
+                             crit.compare("sellingprice", Qt::CaseInsensitive) == 0 ||
+                             crit.compare("SELLINGPRICE", Qt::CaseInsensitive) == 0)
+                    {
+                        col = 6; // colonne Selling Price
+                    }
+
+                    // Si critère non reconnu → reset
+                    if (col < 0) {
+                        refreshArticlesGrid();
+                        return;
+                    }
+
+                    // Tri ascendant sur la colonne choisie
+                    ui->tab_Art->sortItems(col, Qt::AscendingOrder);
+                });
+    }
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 MainWindow::~MainWindow(){ delete ui; }
 
 // =====================
@@ -237,13 +530,21 @@ void MainWindow::on_pushButton_27_clicked()
 void MainWindow::afficherTransactionsSorted(const QString &sortBy)
 {
     QSqlQueryModel *model = new QSqlQueryModel();
-    QString sql = "SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS, IDCOM FROM TAB_TRANS";
+    QString sql = "SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS FROM TAB_TRANS";
+
+    // Determine order direction (default ascending)
+    QString orderDir = " ASC";
+    if (ui->comboBoxSortOrder) {
+        QString ord = ui->comboBoxSortOrder->currentText();
+        if (ord.contains("desc", Qt::CaseInsensitive) || ord.contains("Descending", Qt::CaseInsensitive)) orderDir = " DESC";
+        else orderDir = " ASC";
+    }
 
     if (sortBy.compare("Amount", Qt::CaseInsensitive) == 0) {
         // AMOUNT is stored as VARCHAR2, so convert to number for correct ordering
-        sql += " ORDER BY TO_NUMBER(AMOUNT)";
+        sql += " ORDER BY TO_NUMBER(AMOUNT)" + orderDir;
     } else if (sortBy.compare("Date", Qt::CaseInsensitive) == 0) {
-        sql += " ORDER BY DATE_TRANS";
+        sql += " ORDER BY DATE_TRANS" + orderDir;
     }
 
     model->setQuery(sql);
@@ -277,6 +578,60 @@ void MainWindow::afficherTransactionsSorted(const QString &sortBy)
     }
 
     // Update the chart after sorting display
+    populateStatusChart();
+}
+
+void MainWindow::on_lineEdit_17_textChanged(const QString &text)
+{
+    QString t = text.trimmed();
+    if (t.isEmpty()) {
+        afficherTransactions();
+        return;
+    }
+
+    bool ok = false;
+    int idFilter = t.toInt(&ok);
+
+    QSqlQueryModel *model = new QSqlQueryModel();
+    if (ok) {
+        QSqlQuery q;
+        q.prepare("SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS FROM TAB_TRANS WHERE ID = :ID");
+        q.bindValue(":ID", idFilter);
+        q.exec();
+        model->setQuery(q);
+    } else {
+        // If not a number, return an empty model
+        model->setQuery("SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS FROM TAB_TRANS WHERE 1=0");
+    }
+
+    QTableWidget *table = ui->tableWidget_4;
+    table->setRowCount(0);
+    int cols = model->columnCount();
+    table->setColumnCount(cols);
+    QStringList headers;
+    for (int c = 0; c < cols; ++c) {
+        QString h = model->headerData(c, Qt::Horizontal).toString();
+        if (h.isEmpty()) h = QString("col%1").arg(c);
+        headers << h;
+    }
+    table->setHorizontalHeaderLabels(headers);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    if (cols > 0) table->setColumnHidden(0, true);
+
+    for (int i = 0; i < model->rowCount(); ++i) {
+        table->insertRow(i);
+        for (int j = 0; j < cols; ++j) {
+            QString cell = model->data(model->index(i, j)).toString();
+            if (j == 4 && !cell.isEmpty()) {
+                QDate d = QDate::fromString(cell, "dd/MM/yyyy");
+                if (!d.isValid()) d = QDate::fromString(cell, Qt::ISODate);
+                if (!d.isValid()) d = QDate::fromString(cell, "yyyy-MM-dd");
+                if (d.isValid()) cell = d.toString("dd/MM/yyyy");
+            }
+            table->setItem(i, j, new QTableWidgetItem(cell));
+        }
+    }
+
     populateStatusChart();
 }
 
@@ -391,12 +746,63 @@ void MainWindow::refreshArticlesGrid()
     m_loading = false;
 }
 
+// Helpers pour CATEGORY (support QComboBox OU QLineEdit)
+static QString readCategoryFromUi(const Ui::MainWindow* ui)
+{
+    if (!ui) return {};
+    if (auto *asCombo = qobject_cast<QComboBox*>(ui->cat))
+        return asCombo->currentText().trimmed();
+    if (auto *catCombo = ui->centralwidget->findChild<QComboBox*>("cat"))
+        return catCombo->currentText().trimmed();
+    if (auto *catCombo2 = ui->centralwidget->findChild<QComboBox*>("catBox"))
+        return catCombo2->currentText().trimmed();
+    if (auto *asLine = qobject_cast<QLineEdit*>(ui->cat))
+        return asLine->text().trimmed();
+    return {};
+}
+
+static void setCategoryIntoUi(Ui::MainWindow* ui, const QString& value)
+{
+    if (!ui) return;
+    if (auto *asCombo = qobject_cast<QComboBox*>(ui->cat)) {
+        asCombo->setCurrentText(value);
+        return;
+    }
+    if (auto *catCombo = ui->centralwidget->findChild<QComboBox*>("cat"))
+    {
+        catCombo->setCurrentText(value);
+        return;
+    }
+    if (auto *catCombo2 = ui->centralwidget->findChild<QComboBox*>("catBox"))
+    {
+        catCombo2->setCurrentText(value);
+        return;
+    }
+    // Fallback LineEdit
+    if (auto *asLine = qobject_cast<QLineEdit*>(ui->cat)) {
+        asLine->setText(value);
+    }
+}
+
+static bool isCategoryPlaceholderSelected(Ui::MainWindow* ui)
+{
+    if (!ui) return true;
+    if (auto *asCombo = qobject_cast<QComboBox*>(ui->cat))
+        return isPlaceholderSelected(asCombo, "Select the category");
+    if (auto *catCombo = ui->centralwidget->findChild<QComboBox*>("cat"))
+        return isPlaceholderSelected(catCombo, "Select the category");
+    if (auto *catCombo2 = ui->centralwidget->findChild<QComboBox*>("catBox"))
+        return isPlaceholderSelected(catCombo2, "Select the category");
+    // Si c'est un QLineEdit, on considère placeholder non sélectionné (l’utilisateur doit écrire qqch)
+    return false;
+}
+
 Article MainWindow::readFormArticle() const
 {
     Article a;
-    a.SKU           = ui->sku->text().trimmed().toInt();
+    a.SKU           = ui->sku->text().trimmed().toInt();          // ✅ CRUD → sku
     a.NAME          = ui->name->text().trimmed();
-    a.CATEGORY      = ui->cat->text().trimmed();
+    a.CATEGORY      = readCategoryFromUi(ui);
     a.BRAND         = ui->brand->currentText().trimmed();
     a.PURCHASEPRICE = ui->price1->text().toDouble();
     a.SELLINGPRICE  = ui->price2->text().toDouble();
@@ -408,12 +814,71 @@ Article MainWindow::readFormArticle() const
 
 void MainWindow::on_confirm_clicked()
 {
-    if (ui->sku->text().trimmed().isEmpty()) {
-        QMessageBox::warning(this,"Validation","SKU est obligatoire.");
+    // ==============================
+    // ✅ VALIDATION AVANT INSERT/UPDATE
+    // ==============================
+    // 1) SKU obligatoire et entier (via champ sku)
+    bool okSku = false;
+    const QString skuStr = ui->sku->text().trimmed();
+    const int skuVal = skuStr.toInt(&okSku);
+    if (!okSku || skuStr.isEmpty()) {
+        QMessageBox::warning(this, "Validation", "SKU must be an integer number.");
         ui->sku->setFocus();
+        ui->sku->selectAll();
+        return;
+    }
+    if (skuVal <= 0) {
+        QMessageBox::warning(this, "Validation", "SKU must be a positive integer.");
+        ui->sku->setFocus();
+        ui->sku->selectAll();
         return;
     }
 
+    // 2) Tous les champs obligatoires (rapides)
+    auto requiredNotEmpty = [&](const QString& s){ return !s.trimmed().isEmpty(); };
+    if (!requiredNotEmpty(ui->name->text())
+        || !requiredNotEmpty(ui->price1->text())
+        || !requiredNotEmpty(ui->price2->text())
+        || !requiredNotEmpty(ui->stock->text())
+        || !requiredNotEmpty(ui->loca->text())
+        || !requiredNotEmpty(ui->com->text()))
+    {
+        QMessageBox::warning(this, "Validation", "All fields are required.");
+        return;
+    }
+
+    // 3) CATEGORY / BRAND ne doivent pas rester sur placeholder
+    if (ui->brand && isPlaceholderSelected(ui->brand, "Select the brand")) {
+        QMessageBox::warning(this, "Validation", "All fields are required.");
+        ui->brand->setFocus();
+        return;
+    }
+    if (isCategoryPlaceholderSelected(ui)) {
+        QMessageBox::warning(this, "Validation", "All fields are required.");
+        return;
+    }
+
+    // 4) PURCHASE PRICE, SELLING PRICE : > 0
+    bool okP1=false, okP2=false;
+    const double p1 = ui->price1->text().toDouble(&okP1);
+    const double p2 = ui->price2->text().toDouble(&okP2);
+    if (!okP1 || p1 <= 0.0) {
+        QMessageBox::warning(this, "Validation", "Purchase price must be a strictly positive number.");
+        ui->price1->setFocus(); return;
+    }
+    if (!okP2 || p2 <= 0.0) {
+        QMessageBox::warning(this, "Validation", "Selling price must be a strictly positive number.");
+        ui->price2->setFocus(); return;
+    }
+
+    // 5) STOCK : entier > 0
+    bool okStock=false; const int s = ui->stock->text().toInt(&okStock);
+    if (!okStock || s <= 0) {
+        QMessageBox::warning(this, "Validation", "Stock must be a strictly positive integer.");
+        ui->stock->setFocus(); return;
+    }
+
+    // ====== OK, créer l’objet et poursuivre ======
     Article a = readFormArticle();
 
     if (!m_isEditMode) {
@@ -455,30 +920,87 @@ void MainWindow::on_delete_2_clicked()
         refreshArticlesGrid();
 }
 
+// Supprimer l'article sélectionné via le bouton "DEL"
 void MainWindow::on_DEL_clicked()
 {
-    QString skuText = ui->Line_rech->text().trimmed();
-    if (skuText.isEmpty()) return;
-    bool ok=false; int sku = skuText.toInt(&ok);
-    if (!ok) return;
+    if (!ui->tab_Art) {
+        QMessageBox::warning(this, "Delete", "Articles table not found.");
+        return;
+    }
 
-    if (QMessageBox::question(this,"Confirmer",
-                              QString("Supprimer l'article SKU %1 ?").arg(sku)) != QMessageBox::Yes) return;
+    // 1) Trouver la ligne sélectionnée (supporte sélection ou simple clic courant)
+    int row = -1;
+    if (ui->tab_Art->selectionModel()) {
+        const auto sel = ui->tab_Art->selectionModel()->selectedRows();
+        if (!sel.isEmpty()) row = sel.first().row();
+    }
+    if (row < 0) row = ui->tab_Art->currentRow();
 
-    if (article_dao::remove(sku)) refreshArticlesGrid();
-    ui->Line_rech->clear();
+    if (row < 0) {
+        QMessageBox::warning(this, "Delete", "Please select a row to delete.");
+        return;
+    }
+
+    // 2) Récupérer le SKU (colonne 1 du tableau des articles)
+    QTableWidgetItem* skuItem = ui->tab_Art->item(row, 1);
+    if (!skuItem) {
+        QMessageBox::warning(this, "Delete", "Cannot read SKU from the selected row.");
+        return;
+    }
+    bool ok = false;
+    const int sku = skuItem->text().toInt(&ok);
+    if (!ok || sku <= 0) {
+        QMessageBox::warning(this, "Delete", "Invalid SKU value.");
+        return;
+    }
+
+    // 3) Demander confirmation
+    if (QMessageBox::question(this, "Confirm",
+                              QString("Delete article with SKU %1 ?").arg(sku),
+                              QMessageBox::Yes | QMessageBox::No)
+        != QMessageBox::Yes) {
+        return;
+    }
+
+    // 4) Supprimer dans la base
+    if (!article_dao::remove(sku)) {
+        QMessageBox::critical(this, "Error", "Delete failed.");
+        return;
+    }
+
+    // 5) Rafraîchir l’UI et réinitialiser le formulaire (retour au mode ajout)
+    refreshArticlesGrid();
+    setFormMode(false);
+    QMessageBox::information(this, "Success", "Article deleted.");
 }
+
 
 void MainWindow::setFormMode(bool edit)
 {
     m_isEditMode = edit;
     if (edit) {
         ui->confirm->setText("Update");
-        ui->sku->setEnabled(false);
+        ui->sku->setEnabled(false);      // ✅ on bloque sku (CRUD), pas sku_2
     } else {
         ui->confirm->setText("Confirm");
         ui->sku->setEnabled(true);
-        ui->sku->clear(); ui->name->clear(); ui->cat->clear(); ui->brand->setCurrentIndex(0);
+        ui->sku->clear();
+        ui->name->clear();
+
+        // CATEGORY reset (combo si dispo, sinon line edit)
+        if (!isCategoryPlaceholderSelected(ui)) setCategoryIntoUi(ui, "");
+        if (auto *asCombo = qobject_cast<QComboBox*>(ui->cat)) {
+            int idx = asCombo->findText("Select the category", Qt::MatchFixedString);
+            asCombo->setCurrentIndex(idx >= 0 ? idx : 0);
+        } else {
+            setCategoryIntoUi(ui, "");
+        }
+
+        if (ui->brand) {
+            int idx = ui->brand->findText("Select the brand", Qt::MatchFixedString);
+            ui->brand->setCurrentIndex(idx >= 0 ? idx : 0);
+        }
+
         ui->price1->clear(); ui->price2->clear(); ui->stock->clear();
         ui->loca->clear(); ui->com->clear();
     }
@@ -487,10 +1009,15 @@ void MainWindow::setFormMode(bool edit)
 void MainWindow::populateFormFromRow(int row)
 {
     if (row < 0) return;
-    ui->sku->setText(ui->tab_Art->item(row,1)->text());
+    ui->sku->setText(ui->tab_Art->item(row,1)->text());         // ✅ CRUD → sku
     ui->name->setText(ui->tab_Art->item(row,2)->text());
-    ui->cat->setText(ui->tab_Art->item(row,3)->text());
+
+    // CATEGORY
+    setCategoryIntoUi(ui, ui->tab_Art->item(row,3)->text());
+
+    // BRAND
     ui->brand->setCurrentText(ui->tab_Art->item(row,4)->text());
+
     ui->price1->setText(ui->tab_Art->item(row,5)->text());
     ui->price2->setText(ui->tab_Art->item(row,6)->text());
     ui->stock->setText(ui->tab_Art->item(row,7)->text());
@@ -501,7 +1028,7 @@ void MainWindow::populateFormFromRow(int row)
 void MainWindow::populateTransactionFormFromRow(int row)
 {
     if (row < 0) return;
-    // Model columns: IDT, ID (refId), AMOUNT, PAY_METHOD, DATE_TRANS, STATUS, IDCOM
+    // Model columns: IDT, ID (refId), AMOUNT, PAY_METHOD, DATE_TRANS, STATUS
     QTableWidget *table = ui->tableWidget_4;
     if (table->item(row,1)) ui->P_id->setText(table->item(row,1)->text());
     if (table->item(row,2)) ui->lineEdit_16->setText(table->item(row,2)->text());
@@ -928,8 +1455,35 @@ void MainWindow::on_c_confirm_clicked()
         QMessageBox::warning(this,"Validation","CIN est obligatoire.");
         return;
     }
+    if (ui->c_fname->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this,"Validation","First name est obligatoire.");
+        return;
+    }
+    if (ui->c_lname->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this,"Validation","Last name est obligatoire.");
+        return;
+    }
+    if (ui->c_email->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this,"Validation","email est obligatoire.");
+        return;
+    }
+    if (ui->c_phone->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this,"Validation","Phone nbr est obligatoire.");
+        return;
+    }
+    if (ui->c_adress->text().trimmed().isEmpty()) {
+        QMessageBox::warning(this,"Validation","adress est obligatoire.");
+        return;
+    }
+    QString em  = ui->c_email->text().trimmed();
+    QRegularExpression rx(R"(^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$)");
+    if (!rx.match(em).hasMatch()) {
+        QMessageBox::warning(this, "Invalid Email",
+                             "Invalid email format. Expected: email@example.com");
+        ui->c_email->setFocus();
+        return;
+    }
     Client c = readClientForm();
-
     if (!m_clientEditMode) {
         if (client_dao::exists(c.CIN)) {
             QMessageBox::warning(this,"Doublon","CIN existe déjà.");
@@ -966,34 +1520,105 @@ void MainWindow::on_c_delete_clicked()
 
 void MainWindow::on_c_DEL_clicked()
 {
+    // 1) Lire le CIN depuis le line edit
     QString cin = ui->c_Line_rech->text().trimmed();
-    if (cin.isEmpty()) return;
-    if (QMessageBox::question(this,"Confirmer",
-                              QString("Supprimer le client %1 ?").arg(cin)) != QMessageBox::Yes) return;
-    if (client_dao::remove(cin)) refreshClientsGrid();
-    ui->c_Line_rech->clear();
-    mettreAJourComboBoxClients(); // ✅ mettre à jour la combo
+
+    // Champ vide ?
+    if (cin.isEmpty()) {
+        QMessageBox::warning(this, "Delete", "Please enter a CIN to delete.");
+        return;
+    }
+
+    // (Optionnel) Vérifier format: exactement 8 chiffres
+    QRegularExpression cinRx(R"(^\d{8}$)");
+    if (!cinRx.match(cin).hasMatch()) {
+        QMessageBox::warning(this, "Delete", "CIN must contain exactly 8 digits.");
+        ui->c_Line_rech->setFocus();
+        ui->c_Line_rech->selectAll();
+        return;
+    }
+
+    // 2) Vérifier que le client existe réellement en base
+    if (!client_dao::exists(cin)) {
+        QMessageBox::information(this, "Delete",
+                                 "No client found with this CIN.");
+        ui->c_Line_rech->selectAll();
+        return;
+    }
+
+    // 3) Demander confirmation
+    if (QMessageBox::question(this, "Confirm",
+                              QString("Delete client %1 ?").arg(cin),
+                              QMessageBox::Yes | QMessageBox::No)
+        != QMessageBox::Yes)
+    {
+        return;
+    }
+
+    // 4) Suppression effective
+    if (client_dao::remove(cin)) {
+        QMessageBox::information(this, "Success",
+                                 "Client deleted successfully.");
+        refreshClientsGrid();          // Rafraîchir le tableau
+        mettreAJourComboBoxClients();  // Mettre à jour la combo des commandes
+        ui->c_Line_rech->clear();      // Vider le line edit
+    } else {
+        QMessageBox::critical(this, "Error",
+                              "Delete failed. Please try again.");
+    }
 }
 void MainWindow::on_tab_Art_cellChanged(int, int) { }
-
 
 
 
 void MainWindow::on_pushButton_25_clicked()
 {
     // Add Payment
-    int id = ui->P_id->text().toInt();
+    QString idStr = ui->P_id->text().trimmed();
+    bool ok = false;
+    int id = idStr.toInt(&ok);
+    if (!ok || id <= 0) {
+        QMessageBox::warning(this, "Validation", "ID invalide. Entrez un entier positif.");
+        ui->P_id->setFocus();
+        return;
+    }
+
     QString amount = ui->lineEdit_16->text().trimmed();
+    QRegularExpression amountRx("^[0-9]+(\\.[0-9]{1,2})?$");
+    if (amount.isEmpty() || !amountRx.match(amount).hasMatch() || amount.toDouble() <= 0.0) {
+        QMessageBox::warning(this, "Validation", "Montant invalide. Entrez un montant numérique positif (ex: 1234.56).");
+        ui->lineEdit_16->setFocus();
+        return;
+    }
+
+    // Ensure a pay method is chosen (assumes index 0 is the placeholder "Select the Method")
+    if (ui->comboBox_3->currentIndex() <= 0) {
+        QMessageBox::warning(this, "Validation", "Veuillez sélectionner une méthode de paiement.");
+        ui->comboBox_3->setFocus();
+        return;
+    }
     QString pay_method = ui->comboBox_3->currentText();
+
     QDate date = ui->dateEdit->date();
+    if (!date.isValid()) {
+        QMessageBox::warning(this, "Validation", "Date invalide. Veuillez sélectionner une date.");
+        ui->dateEdit->setFocus();
+        return;
+    }
+
+    // Ensure a status is chosen (assumes index 0 is placeholder)
+    if (ui->comboBox_4->currentIndex() <= 0) {
+        QMessageBox::warning(this, "Validation", "Veuillez sélectionner un statut.");
+        ui->comboBox_4->setFocus();
+        return;
+    }
     QString status = ui->comboBox_4->currentText();
 
-    // For testing, do not include IDCOM (pass 0 to omit linking to a command)
     // refId is taken from the P_id field and maps to TAB_TRANS.ID (required non-null column)
-    int refId = ui->P_id->text().toInt();
+    int refId = id;
     // If we are editing an existing transaction, call modifier(); otherwise ajouter()
     int idToUse = editing ? editingCode : 0;
-    Transaction t(idToUse, amount, pay_method, date, status, 0, refId);
+    Transaction t(idToUse, amount, pay_method, date, status, refId);
     if (editing) {
         if (t.modifier()) {
             QMessageBox::information(this, "Succès", "Transaction mise à jour !");
@@ -1583,9 +2208,9 @@ void MainWindow::on_pushButton_Emp_Stats_clicked()
     statsDialog->deleteLater();
 }
 
-    // ===================================================
-    //                    COMMANDES
-    // ===================================================
+// ===================================================
+//                    COMMANDES
+// ===================================================
 void MainWindow::rafraichirTableau()
 {
     ui->tableauCommande->clear();
@@ -1625,11 +2250,6 @@ void MainWindow::rafraichirTableau()
 
     ui->tableauCommande->resizeColumnsToContents();
 }
-
-
-
-
-
 
 void MainWindow::on_pushButton_ajouter_clicked()
 {
@@ -1683,19 +2303,14 @@ void MainWindow::on_pushButton_ajouter_clicked()
     ui->lineEdit_code->setReadOnly(false);
     clearFields();
 
-
-
     // ✅ Enregistrer dans la map et sauvegarder dans JSON
     clientsMap[code] = client;
     sauvegarderClients(code, ui->comboBox_client->currentText());
-
 
     // Puis rafraîchir le tableau
     afficherCommandes();
 
 }
-
-
 
 void MainWindow::on_pushButton_supprimer_clicked()
 {
@@ -1742,7 +2357,6 @@ void MainWindow::on_pushButton_supprimer_clicked()
             //  Sauvegarder la map mise à jour dans le JSON
             sauvegarderClients(code, client);
 
-
             QMessageBox::information(this, "Success", "Commande #" + code + " deleted successfully!");
             chargerClientsFichier();
             rafraichirTableau();
@@ -1753,7 +2367,6 @@ void MainWindow::on_pushButton_supprimer_clicked()
 
 }
 
-
 void MainWindow::on_tableauCommande_clicked(const QModelIndex &index)
 {
     if (!index.isValid()) return;
@@ -1761,8 +2374,6 @@ void MainWindow::on_tableauCommande_clicked(const QModelIndex &index)
     selectedRow = index.row();  //mémorise juste la ligne cliquée
     qDebug() << "Ligne sélectionnée :" << selectedRow;
 }
-
-
 
 void MainWindow::on_pushButton_edit_clicked()
 {
@@ -1791,13 +2402,11 @@ void MainWindow::on_pushButton_edit_clicked()
     editing = true;
     editingCodeC = getItemText(0);
 
-
     // (Optionnel) Changer le texte du bouton pour indiquer l’action
     ui->pushButton_ajouter->setText("Save");
     QString code = ui->lineEdit_code->text();
     sauvegarderClients(code, ui->comboBox_client->currentText());
 }
-
 
 void MainWindow::clearFields()
 {
@@ -1857,7 +2466,6 @@ void MainWindow::afficherCommandes()
     ui->tableauCommande->resizeColumnsToContents();
 }
 
-
 void MainWindow::on_pushButton_cancel_clicked()
 {
     clearFields();
@@ -1913,7 +2521,6 @@ bool MainWindow::validerChamps(QString code, QDate date, QString produits, doubl
         QMessageBox::warning(this, "Error", "Please enter a valid positive total amount!");
         return false;
     }
-
 
     // 🔸 6. Statut : parmi les valeurs autorisées
     QStringList statutsValides = {"pending", "in progress", "delivered", "cancelled"};
@@ -1975,8 +2582,6 @@ void MainWindow::chargerClientsFichier()
         clientsMap[it.key()] = it.value().toString();
 }
 
-
-
 void MainWindow::sauvegarderClients(const QString &code, const QString &client)
 {
     QString jsonPath = "clients.json";
@@ -2018,6 +2623,7 @@ void MainWindow::mettreAJourComboBoxClients()
     }
 }
 
+<<<<<<< HEAD
 
 
 
@@ -2375,4 +2981,142 @@ void MainWindow::on_chat_bot_clicked()
     ChatBotDialog dlg(this);
     dlg.setWindowTitle("ChatBot Mistral");
     dlg.exec();
+=======
+void MainWindow::on_pushButton_exportpdf_clicked()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "Exporter en PDF", "", "Fichiers PDF (*.pdf)");
+    if (filePath.isEmpty())
+        return;
+
+    QPdfWriter pdfWriter(filePath);
+    pdfWriter.setPageSize(QPageSize(QPageSize::A4));
+    pdfWriter.setPageMargins(QMarginsF(30, 30, 30, 30));
+
+    QPainter painter(&pdfWriter);
+    if (!painter.isActive()) {
+        QMessageBox::warning(this, "Erreur", "Impossible de créer le fichier PDF.");
+        return;
+    }
+
+    int pageWidth = pdfWriter.width();
+    int pageHeight = pdfWriter.height();
+    int margin = 50;
+    int y = margin;
+
+    // === LOGO ===
+    QPixmap logo(":/images/ressource/logo.jpeg");
+    if (!logo.isNull()) {
+        QRect logoRect(margin, y, 100, 100);
+        painter.drawPixmap(logoRect, logo.scaled(100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    // === TITRE ===
+    painter.setFont(QFont("Helvetica", 18, QFont::Bold));
+    painter.drawText(margin + 130, y + 50, "Liste des Commandes");
+
+    // === DATE ===
+    painter.setFont(QFont("Helvetica", 10));
+    painter.drawText(pageWidth - 200, y + 50, "Date : " + QDate::currentDate().toString("dd/MM/yyyy"));
+
+    y += 150; // plus d’espace avant le tableau
+
+    // === TABLEAU ===
+    int totalCols = ui->tableauCommande->columnCount();
+    int totalRows = ui->tableauCommande->rowCount();
+    if (totalCols == 0 || totalRows == 0) {
+        painter.drawText(margin, y, "⚠️ Aucun enregistrement à afficher.");
+        painter.end();
+        QMessageBox::information(this, "PDF généré", "Aucune donnée à exporter.");
+        return;
+    }
+
+    QVector<int> colWidths(totalCols, 0);
+    QFontMetrics metrics(painter.font());
+
+    // Calcul automatique de la largeur de colonnes
+    for (int col = 0; col < totalCols; ++col) {
+        int maxWidth = metrics.horizontalAdvance(ui->tableauCommande->horizontalHeaderItem(col)->text());
+        for (int row = 0; row < totalRows; ++row) {
+            QTableWidgetItem *item = ui->tableauCommande->item(row, col);
+            if (item)
+                maxWidth = qMax(maxWidth, metrics.horizontalAdvance(item->text()));
+        }
+        colWidths[col] = maxWidth + 40;
+    }
+
+    // Ajustement à la largeur de page
+    int availableWidth = pageWidth - 2 * margin;
+    int totalWidth = std::accumulate(colWidths.begin(), colWidths.end(), 0);
+    if (totalWidth > availableWidth) {
+        double ratio = (double)availableWidth / totalWidth;
+        for (int &w : colWidths) w = int(w * ratio);
+    }
+
+    int rowHeight = 30;
+    QPen borderPen(Qt::black);
+    painter.setPen(borderPen);
+
+    // === En-têtes ===
+    painter.setFont(QFont("Helvetica", 11, QFont::Bold));
+    painter.setBrush(QColor(66, 133, 244));
+
+    int x = margin;
+    for (int col = 0; col < totalCols; ++col) {
+        QRect cellRect(x, y, colWidths[col], rowHeight);
+        painter.fillRect(cellRect, QColor(66, 133, 244));
+        painter.drawRect(cellRect);
+        painter.setPen(Qt::white);
+        painter.drawText(cellRect, Qt::AlignCenter, ui->tableauCommande->horizontalHeaderItem(col)->text());
+        painter.setPen(borderPen);
+        x += colWidths[col];
+    }
+    y += rowHeight;
+
+    // === Données ===
+    painter.setFont(QFont("Helvetica", 10));
+    for (int row = 0; row < totalRows; ++row) {
+        if (y > pageHeight - 100) { // Nouvelle page
+            pdfWriter.newPage();
+            y = margin + 20;
+
+            // Réimpression de l’en-tête
+            x = margin;
+            painter.setFont(QFont("Helvetica", 11, QFont::Bold));
+            painter.setBrush(QColor(66, 133, 244));
+            for (int col = 0; col < totalCols; ++col) {
+                QRect cellRect(x, y, colWidths[col], rowHeight);
+                painter.fillRect(cellRect, QColor(66, 133, 244));
+                painter.drawRect(cellRect);
+                painter.setPen(Qt::white);
+                painter.drawText(cellRect, Qt::AlignCenter, ui->tableauCommande->horizontalHeaderItem(col)->text());
+                painter.setPen(borderPen);
+                x += colWidths[col];
+            }
+            y += rowHeight;
+            painter.setFont(QFont("Helvetica", 10));
+        }
+
+        if (row % 2 == 0)
+            painter.fillRect(QRect(margin, y, availableWidth, rowHeight), QColor(245, 245, 245));
+
+        x = margin;
+        for (int col = 0; col < totalCols; ++col) {
+            QString text = ui->tableauCommande->item(row, col)
+            ? ui->tableauCommande->item(row, col)->text()
+            : "";
+            QRect cellRect(x, y, colWidths[col], rowHeight);
+            painter.drawRect(cellRect);
+            painter.drawText(cellRect, Qt::AlignCenter, text);
+            x += colWidths[col];
+        }
+        y += rowHeight;
+    }
+
+    // === Pied de page ===
+    painter.setFont(QFont("Helvetica", 9, QFont::StyleItalic));
+    painter.drawText(margin, pageHeight - 40, "Document généré automatiquement par ESPRIT_SR");
+
+    painter.end();
+    QMessageBox::information(this, "Succès", "PDF exporté avec succès !");
+>>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 }

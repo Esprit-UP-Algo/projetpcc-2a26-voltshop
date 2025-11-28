@@ -12,6 +12,27 @@ Commande::Commande(QString code, QDate date_commande, QString produits, double t
     this->statut = statut;
 }
 
+bool Commande::supprimer(QString code)
+{
+    Connection& conn = Connection::getInstance();
+    if (!conn.getDatabase().isOpen()) {
+        qDebug() << "Base de données non connectée";
+        return false;
+    }
+
+    QSqlQuery query;
+    query.prepare("DELETE FROM TAB_COMMANDE WHERE CODE = :CODE");
+    query.bindValue(":CODE", code);
+
+    if (!query.exec()) {
+        qDebug() << "❌ Erreur suppression commande :" << query.lastError().text();
+        return false;
+    }
+
+    qDebug() << "✅ Commande supprimée avec succès, code:" << code;
+    return true;
+}
+
 bool Commande::ajouter()
 {
     // Vérifier que la connexion est ouverte
@@ -40,26 +61,7 @@ bool Commande::ajouter()
     qDebug() << "✅ Commande ajoutée avec succès, code:" << code;
     return true;
 }
-bool Commande::supprimer(QString code)
-{
-    Connection& conn = Connection::getInstance();
-    if (!conn.getDatabase().isOpen()) {
-        qDebug() << "Base de données non connectée";
-        return false;
-    }
 
-    QSqlQuery query;
-    query.prepare("DELETE FROM TAB_COMMANDE WHERE CODE = :CODE");
-    query.bindValue(":CODE", code);
-
-    if (!query.exec()) {
-        qDebug() << "❌ Erreur suppression commande :" << query.lastError().text();
-        return false;
-    }
-
-    qDebug() << "✅ Commande supprimée avec succès, code:" << code;
-    return true;
-}
 
 
 QSqlQueryModel* Commande::afficher()

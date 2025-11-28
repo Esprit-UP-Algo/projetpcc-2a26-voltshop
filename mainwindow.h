@@ -18,6 +18,14 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QtCharts/QChartGlobal>
+#include <QtCharts/QChartView>
+#include <QtCharts/QChart>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
+// ❗ AUCUN namespace ici
 
 #include "article_dao.h"
 #include "client_dao.h"
@@ -29,6 +37,7 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class PieChartWidget;
+class BarChartWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -36,6 +45,16 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    // When true, MainWindow will skip heavy initialization (DB queries, charts)
+    // Useful for debugging hangs during construction.
+    static bool s_skipHeavyInit;
+    // When >=0, run only blocks 0..s_initMaxBlock (inclusive) inside finishInitialization.
+    // Set to -1 to run all blocks (default).
+    static int s_initMaxBlock;
+    // Open the tab corresponding to a role string (client, commande, stock, transaction, employe)
+    void openRoleTab(const QString &role);
+    // Set initial role to open after heavy initialization completes.
+    void setInitialRole(const QString &role);
 
 private slots:
     // ----- Navigation (stackedWidget) -----
@@ -50,11 +69,14 @@ private slots:
     void on_delete_2_clicked();
     void on_DEL_clicked();
     void on_tab_Art_cellChanged(int row, int column);
+    void on_btn_pdf_clicked();
+    void on_btn_stats_clicked();
 
     // ====== CLIENTS ======
     void on_c_confirm_clicked();
     void on_c_delete_clicked();
     void on_c_DEL_clicked();
+    void on_pushButton_8_clicked();
 
     // ====== COMMANDES ======
     void on_pushButton_ajouter_clicked();
@@ -67,12 +89,15 @@ private slots:
     void on_pushButton_25_clicked();
     void on_pushButton_28_clicked();
     void on_pushButton_27_clicked();
+    void on_lineEdit_17_textChanged(const QString &arg1);
 
     // ====== EMPLOYEES ======
     void on_confirmb_clicked();   // Confirm Add button
     void on_pushButton_31_clicked();
     void on_lineEdit_19_textChanged(const QString &arg1);
     void on_tab_Employee_cellClicked(int row, int column);
+    // Logout / Quit button
+    void on_quit_clicked();
 private:
     Ui::MainWindow *ui;
 
@@ -80,6 +105,9 @@ private:
     bool m_loading    = false;
     bool m_isEditMode = false;
     int  m_currentRow = -1;
+    QChartView *m_stockStatsViewLeft  = nullptr;
+    QChartView *m_stockStatsViewRight = nullptr;
+    void buildStockStatsCharts();
 
     // ====== CLIENTS ======
     bool m_clientEditMode = false;
@@ -114,7 +142,8 @@ private:
     int selectedRow = -1;
     bool validerChamps(QString code, QDate date, QString produits, double total, QString statut,QString client);
 
-    void on_pushButton_exportPDF_clicked();
+    void on_pushButton_exportpdf_clicked();
+    void on_pushButton_6_clicked();
     QMap<QString, QString> clientsMap; // Associe code_commande → client
 
     void sauvegarderClients(const QString &code, const QString &client);  // Sauvegarde JSON
@@ -127,6 +156,10 @@ private:
     void afficherTransactionsSorted(const QString &sortBy);
     void populateStatusChart();
     PieChartWidget *statusChartViewWidget = nullptr;
+    void populatePaymentMethodChart();
+    BarChartWidget *paymentMethodChartWidget = nullptr;
+    void populateCityChart();
+    PieChartWidget *cityChartViewWidget = nullptr;
 
 
 
@@ -138,6 +171,12 @@ private:
     void clearEmployeeForm();
     bool m_employeeEditMode = false;
     QString m_editingCin;
+    QString m_initialRole;
+protected:
+    void showEvent(QShowEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
+    // Finish heavy initialization after the event loop starts
+    void finishInitialization();
 };
 
 #endif // MAINWINDOW_H

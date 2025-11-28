@@ -7,6 +7,7 @@
 #include <QSqlQueryModel>
 #include <QDebug>
 #include <QSqlError>
+#include "connection.h"
 
 class Commande
 {
@@ -26,5 +27,7 @@ private:
     QDate date_commande;
     double total;
 };
+
+    // Implementations moved to commande.cpp to avoid multiple-definition errors
 
 #endif // COMMANDE_H

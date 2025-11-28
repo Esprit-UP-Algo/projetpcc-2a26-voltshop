@@ -31,8 +31,22 @@
 #include <QPainter>
 #include <QPrinter>
 #include <QTextTable>
-
-
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+#include <QtCharts/QChartView>
+#include <QtCharts/QChart>
+#include <QLabel>
+#include <QGridLayout>
+#include <QPieSeries>
+#include <QPieSlice>
+#include <QChartView>
+#include <QChart>
+#include <QDialog>
+#include <QPushButton>
+#include "CameraCaptureDialog.h"
+#include <opencv2/opencv.hpp>
+#include "face_recognition.h"
+#include "chatbotdialog.h"
 
 #include <QDesktopServices>
 #include <QUrl>
@@ -42,7 +56,7 @@
 bool editing = false;
 int editingCode = -1;
 #include <random>
-// ✅ Generates a random 8-digit employee ID (IDE)
+// ✅ Generates a random 8-digit eloyee ID (IDE)
 QString generateRandomIDE()
 {
     static std::mt19937 rng(std::random_device{}()); // Random engine
@@ -62,22 +76,28 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->lineEdit_19, &QLineEdit::textChanged, this, &MainWindow::on_lineEdit_19_textChanged);
     connect(ui->tab_Employee, &QTableWidget::cellClicked,
             this, &MainWindow::on_tab_Employee_cellClicked);
-    refreshEmployeeTable();
-    //commandes
+    connect(ui->comboBox_Emp_Sort, &QComboBox::currentTextChanged,
+            this, &MainWindow::on_comboBox_Emp_Sort_currentTextChanged);
 
-    ui->tableauCommande->setSelectionMode(QAbstractItemView::SingleSelection);  // Une seule sélection à la fois
-    ui->tableauCommande->setSelectionBehavior(QAbstractItemView::SelectRows);   // Sélectionne toute la ligne
-    ui->tableauCommande->setMouseTracking(true);                                // Active le hover
+    // -------------- ADD THIS LINE FOR STATISTICS ------------------
+    connect(ui->pushButton_Emp_Stats, &QPushButton::clicked,
+            this, &MainWindow::on_pushButton_Emp_Stats_clicked);
+    // --------------------------------------------------------------
+    FaceRecognition::instance().loadTrainingData("C:/Users/IMDS/Downloads/integration2026 (3) (1)/integration2026 (3)/integration2026/integrationtest/employees_photos/employees_photos");
+    refreshEmployeeTable();
+
+    //commandes
+    ui->tableauCommande->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableauCommande->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableauCommande->setMouseTracking(true);
     rafraichirTableau();
-    chargerClientsFichier();  //  Charge la map depuis clients.json
-    chargerClientsComboBox(); //  Remplit la comboBox avec les clients existants
-    afficherCommandes();      //  Affiche les commandes avec la colonne client
+    chargerClientsFichier();
+    chargerClientsComboBox();
+    afficherCommandes();
     mettreAJourComboBoxClients();
 
     connect(ui->comboBox_trie, &QComboBox::currentTextChanged, this, &MainWindow::trierCommandes);
     connect(ui->pushButton_exportpdf, &QPushButton::clicked, this, &MainWindow::exporterPDFCommandes);
-
-
 
     // ----- MENU -----
     connect(ui->btn_Client,      &QPushButton::clicked, this, &MainWindow::showSClient);
@@ -96,28 +116,22 @@ MainWindow::MainWindow(QWidget *parent)
         refreshClientsGrid();
     });
 
-    // Page d’accueil
     ui->stackedWidget->setCurrentIndex(0);
 
-    // Wire up transaction row click to populate the transaction form for editing
     connect(ui->tableWidget_4, &QTableWidget::cellClicked, this, [this](int row, int col){
         if (row < 0) return;
         populateTransactionFormFromRow(row);
-        // set editing mode: editingCode is IDT in column 0
         editing = true;
         if (ui->tableWidget_4->item(row, 0))
             editingCode = ui->tableWidget_4->item(row, 0)->text().toInt();
     });
 
-    // Load transactions once at startup so the table reflects current DB state on launch
     afficherTransactions();
 
-    // Connect the sort combobox to refresh the transactions table when selection changes
     if (ui->comboBoxsort) {
         connect(ui->comboBoxsort, &QComboBox::currentTextChanged, this, &MainWindow::afficherTransactionsSorted);
     }
 }
-
 MainWindow::~MainWindow(){ delete ui; }
 
 // =====================
@@ -631,7 +645,8 @@ void MainWindow::populateEmployeeFormFromRow(int row)
     ui->e_position->setCurrentText(ui->tab_Employee->item(row, 2)->text());// Position
     ui->e_address->setText(ui->tab_Employee->item(row, 3)->text());   // Address
     ui->e_salary->setText(ui->tab_Employee->item(row, 4)->text());    // Salary
-    ui->e_status->setText(ui->tab_Employee->item(row, 5)->text());    // Status
+    ui->e_status->setCurrentText(ui->tab_Employee->item(row, 5)->text());
+        // Status
 }
 
 Employee MainWindow::readEmployeeForm() const
@@ -642,7 +657,8 @@ Employee MainWindow::readEmployeeForm() const
     e.position = ui->e_position->currentText().trimmed().toStdString();
     e.address = ui->e_address->text().trimmed().toStdString();
     e.salary = ui->e_salary->text().trimmed().toStdString(); // ✅ keep as string
-    e.status = ui->e_status->text().trimmed().toStdString();
+    e.status = ui->e_status->currentText().trimmed().toStdString();
+
     return e;
 }
 
@@ -653,7 +669,7 @@ void MainWindow::clearEmployeeForm()
     ui->e_address->clear();
     ui->e_salary->clear();
     ui->e_position->setCurrentIndex(-1); // ✅ This one is a QComboBox
-    ui->e_status->clear();               // ✅ QLineEdit, so use clear()
+    ui->e_status->setCurrentIndex(-1);  // ✅ QLineEdit, so use clear()
 
     ui->e_cin->setEnabled(true);
     ui->e_fullname->setEnabled(true);
@@ -682,8 +698,15 @@ void MainWindow::refreshEmployeeTable()
     ui->tab_Employee->clearContents();
     ui->tab_Employee->setRowCount(0);
 
+    // Build query (sorting included)
+    QString queryStr =
+        "SELECT cin, fullname, position, adress, salary, status FROM employees";
+
+    if (!currentEmployeeSort.isEmpty())
+        queryStr += " ORDER BY " + currentEmployeeSort;
+
     QSqlQuery query(db);
-    if (!query.exec("SELECT cin, fullname, position, adress, salary, status FROM employees")) {
+    if (!query.exec(queryStr)) {
         QMessageBox::critical(this, "Database Error",
                               "Failed to fetch employees:\n" + query.lastError().text());
         return;
@@ -706,6 +729,165 @@ void MainWindow::refreshEmployeeTable()
     if (ui->tab_Employee->rowCount() > 0)
         ui->tab_Employee->selectRow(0);
 }
+
+void MainWindow::on_comboBox_Emp_Sort_currentTextChanged(const QString &sortBy)
+{
+    // 1. Load employees from the DATABASE instead of using g_emp (which is empty)
+    std::vector<Employee> sortedList;
+    QSqlQuery q("SELECT cin, fullname, position, adress, salary, status FROM employees");
+
+    while (q.next()) {
+        Employee e;
+        e.cin      = q.value(0).toString().toStdString();
+        e.fullName = q.value(1).toString().toStdString();
+        e.position = q.value(2).toString().toStdString();
+        e.address  = q.value(3).toString().toStdString();
+        e.salary   = q.value(4).toString().toStdString();
+        e.status   = q.value(5).toString().toStdString();
+        sortedList.push_back(e);
+    }
+
+    // 2. Apply sorting
+    if (sortBy == "Name") {
+        std::sort(sortedList.begin(), sortedList.end(),
+                  [](const Employee &a, const Employee &b) {
+                      return QString::fromStdString(a.fullName)
+                      < QString::fromStdString(b.fullName);
+                  });
+    }
+    else if (sortBy == "CIN") {
+        std::sort(sortedList.begin(), sortedList.end(),
+                  [](const Employee &a, const Employee &b) {
+                      return QString::fromStdString(a.cin)
+                      < QString::fromStdString(b.cin);
+                  });
+    }
+    else if (sortBy == "Salary") {
+        std::sort(sortedList.begin(), sortedList.end(),
+                  [](const Employee &a, const Employee &b) {
+                      return QString::fromStdString(a.salary).toDouble()
+                      < QString::fromStdString(b.salary).toDouble();
+                  });
+    }
+    else {
+        refreshEmployeeTable(); // Default view
+        return;
+    }
+
+    // 3. Draw the sorted table
+    ui->tab_Employee->clearContents();
+    ui->tab_Employee->setRowCount(0);
+    ui->tab_Employee->setHorizontalHeaderLabels(
+        {"CIN", "Full Name", "Position", "Address", "Salary", "Status"}
+        );
+
+    for (const auto &e : sortedList) {
+        int row = ui->tab_Employee->rowCount();
+        ui->tab_Employee->insertRow(row);
+
+        ui->tab_Employee->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(e.cin)));
+        ui->tab_Employee->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(e.fullName)));
+        ui->tab_Employee->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(e.position)));
+        ui->tab_Employee->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(e.address)));
+        ui->tab_Employee->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(e.salary)));
+        ui->tab_Employee->setItem(row, 5, new QTableWidgetItem(QString::fromStdString(e.status)));
+    }
+
+    ui->tab_Employee->resizeColumnsToContents();
+}
+void MainWindow::on_btnPointage_clicked()
+{
+    // Absolute path
+    QString trainingFolder =
+        "C:/Users/IMDS/Downloads/integration2026 (3) (1)/integration2026 (3)/integration2026/integrationtest/employees_photos/employees_photos";
+
+    if (!QDir(trainingFolder).exists())
+        trainingFolder = QCoreApplication::applicationDirPath() + "/employees_photos";
+
+    if (!QDir(trainingFolder).exists()) {
+        QMessageBox::warning(this, "Erreur",
+                             "Dossier d'entraînement introuvable !\n" + trainingFolder);
+        return;
+    }
+
+    qDebug() << "📂 Loading training data from:" << trainingFolder;
+
+    if (!FaceRecognition::instance().loadTrainingData(trainingFolder)) {
+        QMessageBox::warning(this, "Erreur",
+                             "Impossible de charger les données d'entraînement!\n\n"
+                             "Vérifiez que :\n"
+                             "- Le dossier employees_photos existe\n"
+                             "- Il contient des photos nommées CIN.jpg\n"
+                             "- Le fichier haarcascade_frontalface_default.xml est présent");
+        return;
+    }
+
+    // --- CAMERA ---
+    camera.open(0);
+    if (!camera.isOpened()) {
+        QMessageBox::warning(this, "Erreur", "Caméra introuvable!");
+        return;
+    }
+
+    // --- RECOGNITION LOOP ---
+    bool employeeFound = false;
+    int detectionAttempts = 0;
+    const int maxAttempts = 300;
+
+    while (detectionAttempts < maxAttempts && !employeeFound) {
+        cv::Mat frame;
+        camera >> frame;
+
+        if (frame.empty()) break;
+
+        int cinDetected = FaceRecognition::instance().recognize(frame);
+
+        if (cinDetected != -1) {
+            camera.release();
+            cv::destroyAllWindows();
+
+            QString cin = QString::number(cinDetected);
+
+            //=========================
+            //   ATTENDANCE LOGIC
+            //=========================
+            QDateTime timeIn;
+            int attendanceId;
+
+            if (getOpenSession(cin, timeIn, attendanceId)) {
+                // Employee clocking OUT
+                clockOutEmployee(attendanceId, timeIn, cin);
+            } else {
+                // Employee clocking IN
+                clockInEmployee(cin);
+            }
+
+            employeeFound = true;
+            return;
+        }
+
+        cv::putText(frame, "Reconnaissance en cours...",
+                    cv::Point(10, 30),
+                    cv::FONT_HERSHEY_SIMPLEX,
+                    0.7, cv::Scalar(0, 255, 0), 2);
+
+        cv::imshow("Pointage - Appuyez sur ESC pour annuler", frame);
+
+        if (cv::waitKey(30) == 27) break;
+
+        detectionAttempts++;
+    }
+
+    camera.release();
+    cv::destroyAllWindows();
+
+    if (!employeeFound) {
+        QMessageBox::warning(this, "Échec",
+                             "Aucun employé reconnu.\n"
+                             "Vérifiez visibilité, éclairage et base de données.");
+    }
+}
+
 
 
 
@@ -858,21 +1040,21 @@ void MainWindow::on_confirmb_clicked()
     QString fullName = ui->e_fullname->text().trimmed();
     QString position = ui->e_position->currentText().trimmed();
     QString address  = ui->e_address->text().trimmed();
-    QString salary   = ui->e_salary->text().trimmed(); // Keep as string
-    QString status   = ui->e_status->text().trimmed();
+    QString salary   = ui->e_salary->text().trimmed();
+    QString status   = ui->e_status->currentText().trimmed();
 
     // ==========================
-    // ✅ VALIDATION SECTION
+    // VALIDATION
     // ==========================
     QRegularExpression cinRegex("^[0-9]{8}$");
     if (!cinRegex.match(cin).hasMatch()) {
-        QMessageBox::warning(this, "Invalid CIN", "❌ CIN must contain exactly 8 digits.");
+        QMessageBox::warning(this, "Invalid CIN", "❌ CIN must have exactly 8 digits.");
         return;
     }
 
     QRegularExpression nameRegex("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
     if (!nameRegex.match(fullName).hasMatch() || fullName.length() < 3) {
-        QMessageBox::warning(this, "Invalid Name", "❌ Full name must contain only letters and spaces (min 3 characters).");
+        QMessageBox::warning(this, "Invalid Name", "❌ Full name must contain only letters and spaces (min 3 chars).");
         return;
     }
 
@@ -889,7 +1071,7 @@ void MainWindow::on_confirmb_clicked()
 
     QRegularExpression salaryRegex("^[0-9]+(\\.[0-9]{1,2})?$");
     if (!salaryRegex.match(salary).hasMatch() || salary.toDouble() <= 0) {
-        QMessageBox::warning(this, "Invalid Salary", "❌ Salary must be a positive number.");
+        QMessageBox::warning(this, "Invalid Salary", "❌ Salary must be positive.");
         return;
     }
 
@@ -900,9 +1082,7 @@ void MainWindow::on_confirmb_clicked()
         return;
     }
 
-    // ==========================
-    // ✅ DUPLICATE CIN CHECK
-    // ==========================
+    // Duplicate CIN check (only when adding)
     QSqlQuery checkQuery;
     checkQuery.prepare("SELECT COUNT(*) FROM employees WHERE cin = :cin");
     checkQuery.bindValue(":cin", cin);
@@ -920,7 +1100,8 @@ void MainWindow::on_confirmb_clicked()
     // ==============================
     // EDIT MODE
     // ==============================
-    if (m_employeeEditMode) {
+    if (m_employeeEditMode)
+    {
         query.prepare(R"(
             UPDATE employees
             SET cin = :newcin,
@@ -941,9 +1122,10 @@ void MainWindow::on_confirmb_clicked()
         query.bindValue(":oldcin", m_editingCin);
 
         if (query.exec()) {
-            QMessageBox::information(this, "Success", "✅ Employee updated successfully!");
+            QMessageBox::information(this, "Success", "✏️ Employee updated successfully!");
         } else {
-            QMessageBox::critical(this, "Database Error", "❌ Failed to update employee:\n" + query.lastError().text());
+            QMessageBox::critical(this, "Database Error",
+                                  "❌ Failed to update employee:\n" + query.lastError().text());
             return;
         }
 
@@ -951,38 +1133,62 @@ void MainWindow::on_confirmb_clicked()
         m_editingCin.clear();
         ui->e_cin->setEnabled(true);
     }
+    else
+    {
+        // ==============================
+        // ADD MODE (PHOTO REQUIRED)
+        // ==============================
 
-    // ==============================
-    // ADD MODE
-    // ==============================
-    else {
-        QString ide = generateRandomIDE(); // ✅ NEW random 8-digit ID
+        CameraCaptureDialog cam(this);
+
+        if (cam.exec() != QDialog::Accepted) {
+            QMessageBox::warning(this, "Photo Required",
+                                 "❌ You must take a photo to register the employee.");
+            return;
+        }
+
+        QString tempPhotoPath = cam.getSavedImagePath();
+
+        // Save photo permanently
+        QString folder = QDir::currentPath() + "/employees_photos";
+        QDir().mkpath(folder);
+
+        QString finalPhotoPath = folder + "/" + cin + ".jpg";
+
+        QFile::remove(finalPhotoPath);  // if exists
+        QFile::rename(tempPhotoPath, finalPhotoPath);
+
+        // Insert employee
+        QString ide = generateRandomIDE();
 
         query.prepare(R"(
-            INSERT INTO employees (ide, cin, fullname, position, adress, salary, status)
-            VALUES (:ide, :cin, :fullname, :position, :address, :salary, :status)
+            INSERT INTO employees (ide, cin, fullname, position, adress, salary, status, photo)
+            VALUES (:ide, :cin, :fullname, :position, :address, :salary, :status, :photo)
         )");
 
-        query.bindValue(":ide", ide); // ✅ NEW binding
+        query.bindValue(":ide", ide);
         query.bindValue(":cin", cin);
         query.bindValue(":fullname", fullName);
         query.bindValue(":position", position);
         query.bindValue(":address", address);
         query.bindValue(":salary", salary);
         query.bindValue(":status", status);
+        query.bindValue(":photo", finalPhotoPath);
 
         if (query.exec()) {
-            QMessageBox::information(this, "Success", "✅ Employee added successfully!\nID: " + ide);
+            QMessageBox::information(this, "Success",
+                                     "✅ Employee added successfully!\n📸 Photo saved.\nID: " + ide);
         } else {
-            QMessageBox::critical(this, "Database Error", "❌ Failed to add employee:\n" + query.lastError().text());
+            QMessageBox::critical(this, "Database Error",
+                                  "❌ Failed to add employee:\n" + query.lastError().text());
             return;
         }
     }
 
-    // ✅ Refresh and clear
     refreshEmployeeTable();
     clearEmployeeForm();
 }
+
 
 
 
@@ -1088,7 +1294,294 @@ void MainWindow::on_tab_Employee_cellClicked(int row, int column)
     m_employeeEditMode = true;
     m_editingCin = ui->tab_Employee->item(row, 0)->text();
 }
+void MainWindow::on_pushButton_Emp_Stats_clicked()
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.isOpen()) {
+        QMessageBox::critical(this, "Database Error", "Database connection is not open!");
+        return;
+    }
 
+    // Count employees by position and salary ranges
+    QMap<QString, int> positionStats;
+    QMap<QString, int> salaryStats;
+    int totalEmployees = 0;
+    double totalSalary = 0;
+
+    // Define salary ranges
+    QMap<QString, QPair<double, double>> salaryRanges = {
+        {"0-1000 DT", {0, 1000}},
+        {"1001-2000 DT", {1001, 2000}},
+        {"2001-3000 DT", {2001, 3000}},
+        {"3001-4000 DT", {3001, 4000}},
+        {"4001-5000 DT", {4001, 5000}},
+        {"5000+ DT", {5001, 999999}}
+    };
+
+    // Initialize salary range counters
+    for (const QString &range : salaryRanges.keys()) {
+        salaryStats[range] = 0;
+    }
+
+    // Read employee data from DATABASE instead of g_emp
+    QSqlQuery query(db);
+    QString queryStr = "SELECT position, salary FROM employees";
+    if (!query.exec(queryStr)) {
+        QMessageBox::critical(this, "Database Error",
+                              "Failed to fetch employees for statistics:\n" + query.lastError().text());
+        return;
+    }
+
+    // Process employee data from database
+    while (query.next()) {
+        QString position = query.value("position").toString().trimmed();
+        QString salaryStr = query.value("salary").toString().trimmed();
+
+        // Statistics by position
+        if (!position.isEmpty()) {
+            positionStats[position]++;
+        }
+
+        // Statistics by salary
+        bool ok;
+        double salary = salaryStr.toDouble(&ok);
+        if (ok && salary > 0) {
+            totalEmployees++;
+            totalSalary += salary;
+
+            // Find the salary range
+            for (const QString &range : salaryRanges.keys()) {
+                QPair<double, double> limits = salaryRanges[range];
+                if (salary >= limits.first && salary <= limits.second) {
+                    salaryStats[range]++;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Get total count from database (in case some salaries were invalid)
+    QSqlQuery countQuery("SELECT COUNT(*) as total FROM employees", db);
+    if (countQuery.exec() && countQuery.next()) {
+        totalEmployees = countQuery.value("total").toInt();
+    }
+
+    if (positionStats.isEmpty() || totalEmployees == 0) {
+        QMessageBox::information(this, "Information", "No employee data to display.");
+        return;
+    }
+
+    // Create a dialog for statistics
+    QDialog *statsDialog = new QDialog(this);
+    statsDialog->setWindowTitle("Employee Statistics");
+    statsDialog->setMinimumSize(1000, 700);
+
+    QVBoxLayout *dialogLayout = new QVBoxLayout(statsDialog);
+
+    // Create main widget with grid layout
+    QWidget *mainWidget = new QWidget();
+    QGridLayout *mainLayout = new QGridLayout(mainWidget);
+    mainLayout->setContentsMargins(10, 10, 10, 10);
+    mainLayout->setSpacing(15);
+
+    // === MAIN TITLE ===
+    QLabel *titleLabel = new QLabel("Employee Statistics");
+    titleLabel->setStyleSheet("font-size: 16px; font-weight: bold; color: #2c3e50; margin-bottom: 15px;");
+    titleLabel->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(titleLabel, 0, 0, 1, 2);
+
+    // Colors for charts
+    QVector<QColor> colors = {
+        QColor("#3498db"),  // Blue
+        QColor("#e74c3c"),  // Red
+        QColor("#2ecc71"),  // Green
+        QColor("#f39c12"),  // Orange
+        QColor("#9b59b6"),  // Purple
+        QColor("#1abc9c"),  // Turquoise
+        QColor("#d35400"),  // Dark orange
+        QColor("#c0392b")   // Dark red
+    };
+
+    // === CHART 1: DISTRIBUTION BY POSITION ===
+    QWidget *positionWidget = new QWidget();
+    QVBoxLayout *positionLayout = new QVBoxLayout(positionWidget);
+    positionLayout->setContentsMargins(5, 5, 5, 5);
+
+    // Title
+    QLabel *positionTitle = new QLabel("Distribution by Position");
+    positionTitle->setStyleSheet("font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;");
+    positionTitle->setAlignment(Qt::AlignCenter);
+    positionLayout->addWidget(positionTitle);
+
+    // Create pie chart for positions
+    QPieSeries *seriesPositions = new QPieSeries();
+
+    int colorIndex = 0;
+    for (auto it = positionStats.begin(); it != positionStats.end(); ++it) {
+        double percentage = (it.value() * 100.0) / totalEmployees;
+
+        // Use short and clear names
+        QString positionDisplay = it.key();
+        if (positionDisplay.length() > 12)
+            positionDisplay = positionDisplay.left(10) + "..";
+
+        // Format with line break: percentage on top, name below
+        QString label = QString("%1%\n%2").arg(percentage, 0, 'f', 1).arg(positionDisplay);
+
+        QPieSlice *slice = seriesPositions->append(label, it.value());
+        slice->setColor(colors[colorIndex % colors.size()]);
+        slice->setLabelVisible(true);
+        slice->setLabelColor(Qt::black);
+        slice->setLabelPosition(QPieSlice::LabelOutside);
+        slice->setLabelArmLengthFactor(0.1); // Short arm
+        slice->setExplodeDistanceFactor(0.01); // Very slight separation
+        slice->setBorderColor(Qt::white);
+        slice->setBorderWidth(1);
+
+        // Adaptive font
+        QFont labelFont = slice->labelFont();
+        labelFont.setPointSize(8);
+        labelFont.setBold(true);
+        slice->setLabelFont(labelFont);
+
+        colorIndex++;
+    }
+
+    QChart *chartPositions = new QChart();
+    chartPositions->addSeries(seriesPositions);
+    chartPositions->setTitle("");
+    chartPositions->legend()->setVisible(false);
+    chartPositions->setAnimationOptions(QChart::AllAnimations);
+    chartPositions->setBackgroundBrush(QBrush(QColor("#f8f9fa")));
+    chartPositions->setMargins(QMargins(0, 0, 0, 0));
+
+    QChartView *chartViewPositions = new QChartView(chartPositions);
+    chartViewPositions->setRenderHint(QPainter::Antialiasing);
+    chartViewPositions->setMinimumSize(400, 350);
+
+    positionLayout->addWidget(chartViewPositions);
+    mainLayout->addWidget(positionWidget, 1, 0);
+
+    // === CHART 2: DISTRIBUTION BY SALARY ===
+    QWidget *salaryWidget = new QWidget();
+    QVBoxLayout *salaryLayout = new QVBoxLayout(salaryWidget);
+    salaryLayout->setContentsMargins(5, 5, 5, 5);
+
+    // Title
+    QLabel *salaryTitle = new QLabel("Distribution by Salary Range");
+    salaryTitle->setStyleSheet("font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;");
+    salaryTitle->setAlignment(Qt::AlignCenter);
+    salaryLayout->addWidget(salaryTitle);
+
+    // Create pie chart for salaries
+    QPieSeries *seriesSalary = new QPieSeries();
+
+    // Colors for salary ranges
+    QVector<QColor> colorsSalary = {
+        QColor("#2ecc71"),  // Light green
+        QColor("#3498db"),  // Blue
+        QColor("#f39c12"),  // Orange
+        QColor("#e67e22"),  // Dark orange
+        QColor("#e74c3c"),  // Red
+        QColor("#c0392b")   // Dark red
+    };
+
+    int colorSalaryIndex = 0;
+    for (auto it = salaryStats.begin(); it != salaryStats.end(); ++it) {
+        if (it.value() > 0) {
+            double percentage = (it.value() * 100.0) / totalEmployees;
+
+            // Short names for salary ranges
+            QString rangeDisplay = it.key();
+            if (rangeDisplay == "0-1000 DT") rangeDisplay = "0-1k DT";
+            else if (rangeDisplay == "1001-2000 DT") rangeDisplay = "1k-2k DT";
+            else if (rangeDisplay == "2001-3000 DT") rangeDisplay = "2k-3k DT";
+            else if (rangeDisplay == "3001-4000 DT") rangeDisplay = "3k-4k DT";
+            else if (rangeDisplay == "4001-5000 DT") rangeDisplay = "4k-5k DT";
+            else if (rangeDisplay == "5000+ DT") rangeDisplay = "5k+ DT";
+
+            // Format with line break: percentage on top, range below
+            QString label = QString("%1%\n%2").arg(percentage, 0, 'f', 1).arg(rangeDisplay);
+
+            QPieSlice *slice = seriesSalary->append(label, it.value());
+            slice->setColor(colorsSalary[colorSalaryIndex % colorsSalary.size()]);
+            slice->setLabelVisible(true);
+            slice->setLabelColor(Qt::black);
+            slice->setLabelPosition(QPieSlice::LabelOutside);
+            slice->setLabelArmLengthFactor(0.1); // Short arm
+            slice->setExplodeDistanceFactor(0.01); // Very slight separation
+            slice->setBorderColor(Qt::white);
+            slice->setBorderWidth(1);
+
+            // Adaptive font
+            QFont labelFont = slice->labelFont();
+            labelFont.setPointSize(8);
+            labelFont.setBold(true);
+            slice->setLabelFont(labelFont);
+
+            colorSalaryIndex++;
+        }
+    }
+
+    QChart *chartSalary = new QChart();
+    chartSalary->addSeries(seriesSalary);
+    chartSalary->setTitle("");
+    chartSalary->legend()->setVisible(false);
+    chartSalary->setAnimationOptions(QChart::AllAnimations);
+    chartSalary->setBackgroundBrush(QBrush(QColor("#f8f9fa")));
+    chartSalary->setMargins(QMargins(0, 0, 0, 0));
+
+    QChartView *chartViewSalary = new QChartView(chartSalary);
+    chartViewSalary->setRenderHint(QPainter::Antialiasing);
+    chartViewSalary->setMinimumSize(400, 350);
+
+    salaryLayout->addWidget(chartViewSalary);
+    mainLayout->addWidget(salaryWidget, 1, 1);
+
+    // === SUMMARY STATISTICS ===
+    QWidget *summaryWidget = new QWidget();
+    QVBoxLayout *summaryLayout = new QVBoxLayout(summaryWidget);
+
+    QLabel *summaryTitle = new QLabel("Summary Statistics");
+    summaryTitle->setStyleSheet("font-size: 14px; font-weight: bold; color: #2c3e50; margin-bottom: 10px;");
+    summaryTitle->setAlignment(Qt::AlignCenter);
+    summaryLayout->addWidget(summaryTitle);
+
+    double avgSalary = totalEmployees > 0 ? totalSalary / totalEmployees : 0;
+
+    QLabel *totalLabel = new QLabel(QString("Total Employees: %1").arg(totalEmployees));
+    QLabel *avgSalaryLabel = new QLabel(QString("Average Salary: %1 DT").arg(avgSalary, 0, 'f', 2));
+    QLabel *positionsLabel = new QLabel(QString("Different Positions: %1").arg(positionStats.size()));
+
+    QStringList summaryStyles = {
+        "font-size: 12px; padding: 5px; background-color: #ecf0f1; border-radius: 3px;"
+    };
+
+    totalLabel->setStyleSheet(summaryStyles[0]);
+    avgSalaryLabel->setStyleSheet(summaryStyles[0]);
+    positionsLabel->setStyleSheet(summaryStyles[0]);
+
+    summaryLayout->addWidget(totalLabel);
+    summaryLayout->addWidget(avgSalaryLabel);
+    summaryLayout->addWidget(positionsLabel);
+
+    mainLayout->addWidget(summaryWidget, 2, 0, 1, 2);
+
+    // Add close button
+    QPushButton *closeButton = new QPushButton("Close");
+    closeButton->setStyleSheet("QPushButton { background-color: #e74c3c; color: white; padding: 8px; border-radius: 4px; }");
+    connect(closeButton, &QPushButton::clicked, statsDialog, &QDialog::accept);
+    mainLayout->addWidget(closeButton, 3, 0, 1, 2);
+
+    // Add everything to dialog
+    dialogLayout->addWidget(mainWidget);
+
+    // Show the dialog
+    statsDialog->exec();
+
+    // Clean up
+    statsDialog->deleteLater();
+}
 
     // ===================================================
     //                    COMMANDES
@@ -1699,4 +2192,187 @@ void MainWindow::exporterPDFCommandes()
 
     QMessageBox::information(parent, "Export Successful 🎉",
                              "The PDF file has been successfully saved at:\n" + fileName);
+}
+bool MainWindow::getOpenSession(const QString &cin,
+                                QDateTime &timeIn,
+                                int &attendanceId)
+{
+    QSqlQuery query;
+    query.prepare("SELECT id, time_in FROM attendance WHERE cin = :cin AND time_out IS NULL");
+    query.bindValue(":cin", cin);
+
+    if (!query.exec()) {
+        qDebug() << "❌ ERROR getOpenSession:" << query.lastError();
+        return false;
+    }
+
+    if (query.next()) {
+        attendanceId = query.value("id").toInt();
+        timeIn = query.value("time_in").toDateTime();
+        return true;
+    }
+
+    return false;
+}
+
+void MainWindow::clockInEmployee(const QString &cin)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO attendance (id, cin, time_in) "
+                  "VALUES (ATTENDANCE_SEQ.NEXTVAL, :cin, CURRENT_TIMESTAMP)");
+    query.bindValue(":cin", cin);
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Erreur", "Échec du pointage d'entrée !");
+        qDebug() << "❌ ERROR clockInEmployee:" << query.lastError();
+        return;
+    }
+
+    QMessageBox::information(this, "Pointage Entrée",
+                             "Entrée enregistrée pour CIN: " + cin);
+}
+
+
+
+void MainWindow::clockOutEmployee(int attendanceId,
+                                  const QDateTime &timeIn,
+                                  const QString &cin)
+{
+    QDateTime now = QDateTime::currentDateTime();
+
+    // Update attendance record
+    QSqlQuery query;
+    query.prepare("UPDATE attendance SET time_out = CURRENT_TIMESTAMP WHERE id = :id");
+    query.bindValue(":id", attendanceId);
+
+    if (!query.exec()) {
+        QMessageBox::warning(this, "Erreur", "Échec du pointage de sortie !");
+        qDebug() << "❌ ERROR clockOutEmployee:" << query.lastError();
+        return;
+    }
+
+    // Calculate worked duration
+    qint64 seconds = timeIn.secsTo(now);
+    QTime workedTime = QTime(0, 0).addSecs(seconds);
+    double hoursWorked = getWorkedHours(timeIn, now);
+
+    // Update employee salary based on hours worked
+    updateEmployeeSalary(cin, hoursWorked);
+
+    // Get employee position for display
+    QSqlQuery posQuery;
+    posQuery.prepare("SELECT position, salary FROM EMPLOYEE WHERE cin = :cin");
+    posQuery.bindValue(":cin", cin);
+
+    QString position = "Unknown";
+    QString newSalary = "N/A";
+    if (posQuery.exec() && posQuery.next()) {
+        position = posQuery.value("position").toString();
+        newSalary = QString::number(posQuery.value("salary").toDouble(), 'f', 2);
+    }
+
+    double hourlyRate = calculateHourlyRate(position);
+    double earnedAmount = hoursWorked * hourlyRate;
+
+    // Show detailed message with salary information
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Pointage Sortie");
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setText(QString(
+                       "✅ Sortie enregistrée pour CIN: %1\n\n"
+                       "📋 Poste: %2\n"
+                       "⏱️ Temps travaillé: %3\n"
+                       "💰 Taux horaire: %4 TND/h\n"
+                       "💵 Montant gagné: %5 TND\n"
+                       "💳 Salaire total: %6 TND"
+                       ).arg(cin)
+                       .arg(position)
+                       .arg(workedTime.toString("hh:mm:ss"))
+                       .arg(QString::number(hourlyRate, 'f', 2))
+                       .arg(QString::number(earnedAmount, 'f', 2))
+                       .arg(newSalary));
+
+    msgBox.exec();
+
+    // Refresh the employee table to show updated salary
+    refreshEmployeeTable();
+}
+double MainWindow::calculateHourlyRate(const QString &position)
+{
+    QString pos = position.toLower().trimmed();
+
+    // Hourly rates based on position hierarchy
+    if (pos.contains("manager") || pos.contains("directeur")) {
+        return 25.0;  // 25 TND/hour for managers
+    }
+    else if (pos.contains("technicien") || pos.contains("technician")) {
+        return 15.0;  // 15 TND/hour for technicians
+    }
+    else if (pos.contains("security") || pos.contains("securite") || pos.contains("guard")) {
+        return 8.0;   // 8 TND/hour for security
+    }
+    else {
+        return 12.0;  // 12 TND/hour for other positions (default)
+    }
+}
+
+// =====================================================
+//           CALCULATE WORKED HOURS
+// =====================================================
+double MainWindow::getWorkedHours(const QDateTime &timeIn, const QDateTime &timeOut)
+{
+    qint64 seconds = timeIn.secsTo(timeOut);
+    return seconds / 3600.0; // Convert seconds to hours
+}
+// =====================================================
+//           UPDATE EMPLOYEE SALARY
+// =====================================================
+void MainWindow::updateEmployeeSalary(const QString &cin, double hoursWorked)
+{
+    // Get employee position from database
+    QSqlQuery query;
+    query.prepare("SELECT position, salary FROM EMPLOYEE WHERE cin = :cin");
+    query.bindValue(":cin", cin);
+
+    if (!query.exec() || !query.next()) {
+        qDebug() << "❌ ERROR: Could not retrieve employee data:" << query.lastError();
+        return;
+    }
+
+    QString position = query.value("position").toString();
+    double currentSalary = query.value("salary").toDouble();
+
+    // Calculate hourly rate based on position
+    double hourlyRate = calculateHourlyRate(position);
+
+    // Calculate earned amount for this session
+    double earnedAmount = hoursWorked * hourlyRate;
+
+    // Update total salary
+    double newSalary = currentSalary + earnedAmount;
+
+    // Update in database
+    QSqlQuery updateQuery;
+    updateQuery.prepare("UPDATE EMPLOYEE SET salary = :salary WHERE cin = :cin");
+    updateQuery.bindValue(":salary", QString::number(newSalary, 'f', 2));
+    updateQuery.bindValue(":cin", cin);
+
+    if (!updateQuery.exec()) {
+        qDebug() << "❌ ERROR: Failed to update salary:" << updateQuery.lastError();
+        QMessageBox::warning(this, "Erreur", "Échec de la mise à jour du salaire !");
+        return;
+    }
+
+    qDebug() << "✅ Salary updated for CIN:" << cin
+             << "| Position:" << position
+             << "| Hours:" << hoursWorked
+             << "| Rate:" << hourlyRate << "TND/h"
+             << "| Earned:" << earnedAmount << "TND"
+             << "| New Total:" << newSalary << "TND";
+}
+void MainWindow::on_chat_bot_clicked()
+{
+    ChatBotDialog dlg(this);
+    dlg.setWindowTitle("ChatBot Mistral");
+    dlg.exec();
 }

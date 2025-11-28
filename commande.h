@@ -7,6 +7,8 @@
 #include <QSqlQueryModel>
 #include <QDebug>
 #include <QSqlError>
+#include "ui_mainwindow.h"
+
 
 class Commande
 {
@@ -17,6 +19,7 @@ public:
     bool ajouter();
     bool supprimer(QString code);
     bool modifier();
+    void exporterPDFCommandes(Ui::MainWindow* ui);
 
     QSqlQueryModel* afficher();
 

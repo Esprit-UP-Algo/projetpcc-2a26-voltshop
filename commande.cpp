@@ -1,5 +1,15 @@
 #include "commande.h"
 #include "connection.h"
+#include "ui_mainwindow.h"
+
+#include <QFileDialog>
+#include <QTextDocument>
+#include <QTextTable>
+#include <QPrinter>
+#include <QMessageBox>
+#include <QDate>
+#include <QDateTime>
+#include <QTextCursor>
 
 Commande::Commande() {}
 
@@ -120,3 +130,9 @@ bool Commande::modifier()
     qDebug() << "✅ Commande mise à jour avec succès, code:" << code;
     return true;
 }
+
+
+
+
+
+

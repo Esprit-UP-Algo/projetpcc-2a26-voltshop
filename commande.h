@@ -7,6 +7,8 @@
 #include <QSqlQueryModel>
 #include <QDebug>
 #include <QSqlError>
+#include "ui_mainwindow.h"
+
 
 class Commande
 {
@@ -17,8 +19,15 @@ public:
     bool ajouter();
     bool supprimer(QString code);
     bool modifier();
+    void exporterPDFCommandes(Ui::MainWindow* ui);
 
     QSqlQueryModel* afficher();
+
+    int stat_total_commandes();
+    double stat_revenu_total();
+    QMap<QString, int> stat_statuts();
+    QMap<QString, int> stat_par_mois();
+
 
 private:
     QString code;

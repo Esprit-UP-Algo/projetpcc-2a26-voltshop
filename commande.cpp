@@ -1,5 +1,15 @@
 #include "commande.h"
 #include "connection.h"
+#include "ui_mainwindow.h"
+
+#include <QFileDialog>
+#include <QTextDocument>
+#include <QTextTable>
+#include <QPrinter>
+#include <QMessageBox>
+#include <QDate>
+#include <QDateTime>
+#include <QTextCursor>
 
 Commande::Commande() {}
 
@@ -43,23 +53,53 @@ bool Commande::ajouter()
 bool Commande::supprimer(QString code)
 {
     Connection& conn = Connection::getInstance();
-    if (!conn.getDatabase().isOpen()) {
+    QSqlDatabase db = conn.getDatabase();
+
+    if (!db.isOpen()) {
         qDebug() << "Base de données non connectée";
         return false;
     }
 
-    QSqlQuery query;
+    // On utilise une transaction : soit tout passe, soit rien
+    if (!db.transaction()) {
+        qDebug() << "❌ Impossible de démarrer une transaction:" << db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery query(db);
+
+    // 1) Supprimer les lignes liées dans CONCERNER
+    query.prepare("DELETE FROM CONCERNER WHERE CODE = :CODE");
+    query.bindValue(":CODE", code);
+
+    if (!query.exec()) {
+        qDebug() << "❌ Erreur suppression CONCERNER :" << query.lastError().text();
+        db.rollback();
+        return false;
+    }
+
+    // 2) Supprimer la commande dans TAB_COMMANDE
+    query.clear();
     query.prepare("DELETE FROM TAB_COMMANDE WHERE CODE = :CODE");
     query.bindValue(":CODE", code);
 
     if (!query.exec()) {
         qDebug() << "❌ Erreur suppression commande :" << query.lastError().text();
+        db.rollback();
         return false;
     }
 
-    qDebug() << "✅ Commande supprimée avec succès, code:" << code;
+    // 3) Valider la transaction
+    if (!db.commit()) {
+        qDebug() << "❌ Erreur commit transaction :" << db.lastError().text();
+        db.rollback();
+        return false;
+    }
+
+    qDebug() << "✅ Commande et lignes CONCERNER supprimées avec succès, code:" << code;
     return true;
 }
+
 
 
 QSqlQueryModel* Commande::afficher()
@@ -120,3 +160,51 @@ bool Commande::modifier()
     qDebug() << "✅ Commande mise à jour avec succès, code:" << code;
     return true;
 }
+
+int Commande::stat_total_commandes() {
+    QSqlQuery query("SELECT COUNT(*) FROM commandes");
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+}
+
+
+double Commande::stat_revenu_total() {
+    QSqlQuery query("SELECT SUM(total) FROM commandes");
+    if (query.next())
+        return query.value(0).toDouble();
+    return 0;
+}
+
+
+QMap<QString,int> Commande::stat_statuts() {
+    QMap<QString,int> map;
+    QSqlQuery query("SELECT statut, COUNT(*) FROM commandes GROUP BY statut");
+    while (query.next()) {
+        QString st = query.value(0).toString();
+        int c = query.value(1).toInt();
+        map[st] = c;
+    }
+    return map;
+}
+
+
+QMap<QString,int> Commande::stat_par_mois() {
+    QMap<QString,int> map;
+    QSqlQuery query("SELECT TO_CHAR(date_commande, 'MM'), COUNT(*) FROM commandes GROUP BY TO_CHAR(date_commande,'MM')");
+    while (query.next()) {
+        QString mois = query.value(0).toString();
+        int count = query.value(1).toInt();
+        map[mois] = count;
+    }
+    return map;
+}
+
+
+
+
+
+
+
+
+

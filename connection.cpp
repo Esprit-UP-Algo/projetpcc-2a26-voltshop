@@ -35,6 +35,7 @@ void Connection::closeConnection() {
         db.close();
 }
 
+
 QSqlDatabase Connection::getDatabase() {
     return db;
 }

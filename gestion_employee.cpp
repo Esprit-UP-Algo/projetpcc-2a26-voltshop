@@ -2,88 +2,51 @@
 #include <regex>
 #include <iostream>
 #include <iomanip>
-<<<<<<< HEAD
 #include <QMessageBox>
 #include <algorithm>
-=======
-#include <QMessageBox> // ✅ for pop-up messages
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
 // ===================================================
 //                ADD EMPLOYEE
 // ===================================================
 void GestionEmployee::addEmployee(const Employee& emp)
 {
-<<<<<<< HEAD
-=======
-    // ✅ Field validation rules
-
-    // CIN: must be exactly 8 digits (Tunisia format)
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     std::regex cinRegex("^[0-9]{8}$");
     if (!std::regex_match(emp.cin, cinRegex)) {
         QMessageBox::warning(nullptr, "Invalid CIN", "❌ CIN must contain exactly 8 digits.");
         return;
     }
 
-<<<<<<< HEAD
-=======
-    // Full Name: only letters, spaces, and accents allowed
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     std::regex nameRegex("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$");
     if (!std::regex_match(emp.fullName, nameRegex) || emp.fullName.length() < 3) {
         QMessageBox::warning(nullptr, "Invalid Name", "❌ Full name must contain only letters and spaces (min 3 characters).");
         return;
     }
 
-<<<<<<< HEAD
-=======
-    // Position: only alphabetic job titles allowed
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     std::regex positionRegex("^[A-Za-z\\s]+$");
     if (!std::regex_match(emp.position, positionRegex) || emp.position.empty()) {
         QMessageBox::warning(nullptr, "Invalid Position", "❌ Position must contain only letters.");
         return;
     }
 
-<<<<<<< HEAD
-=======
-    // Address: minimum length check
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     if (emp.address.length() < 5) {
         QMessageBox::warning(nullptr, "Invalid Address", "❌ Address must contain at least 5 characters.");
         return;
     }
 
-<<<<<<< HEAD
-=======
-    // Salary: must be a positive numeric string (even if stored as VARCHAR)
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     std::regex salaryRegex("^[0-9]+(\\.[0-9]{1,2})?$");
     if (!std::regex_match(emp.salary, salaryRegex) || std::stod(emp.salary) <= 0) {
         QMessageBox::warning(nullptr, "Invalid Salary", "❌ Salary must be a positive number.");
         return;
     }
 
-<<<<<<< HEAD
     std::vector<std::string> validStatuses = {"Active", "Inactive", "On Probation", "Resigned", "Terminated"};
-=======
-    // Status: must be one of allowed values
-    std::vector<std::string> validStatuses = {
-        "Active", "Inactive", "On Probation", "Resigned", "Terminated"
-    };
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     if (std::find(validStatuses.begin(), validStatuses.end(), emp.status) == validStatuses.end()) {
         QMessageBox::warning(nullptr, "Invalid Status",
                              "❌ Status must be one of:\nActive, Inactive, On Probation, Resigned, Terminated.");
         return;
     }
 
-<<<<<<< HEAD
     // Check for duplicate CIN
-=======
-    // ✅ Check for duplicate CIN
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     for (const auto& e : employees) {
         if (e.cin == emp.cin) {
             QMessageBox::warning(nullptr, "Duplicate CIN",
@@ -92,10 +55,6 @@ void GestionEmployee::addEmployee(const Employee& emp)
         }
     }
 
-<<<<<<< HEAD
-=======
-    // ✅ Passed all checks
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     employees.push_back(emp);
     QMessageBox::information(nullptr, "Success",
                              QString::fromStdString("✅ Employee '" + emp.fullName + "' added successfully."));
@@ -139,10 +98,6 @@ void GestionEmployee::displayEmployees() const
 // ===================================================
 bool GestionEmployee::editEmployee(const std::string& cin, const Employee& updated)
 {
-<<<<<<< HEAD
-=======
-    // ✅ Reuse validation rules
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     std::regex cinRegex("^[0-9]{8}$");
     if (!std::regex_match(updated.cin, cinRegex)) {
         QMessageBox::warning(nullptr, "Invalid CIN", "❌ CIN must contain exactly 8 digits.");
@@ -172,23 +127,13 @@ bool GestionEmployee::editEmployee(const std::string& cin, const Employee& updat
         return false;
     }
 
-<<<<<<< HEAD
     std::vector<std::string> validStatuses = {"Active", "Inactive", "On Probation", "Resigned", "Terminated"};
-=======
-    std::vector<std::string> validStatuses = {
-        "Active", "Inactive", "On Probation", "Resigned", "Terminated"
-    };
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     if (std::find(validStatuses.begin(), validStatuses.end(), updated.status) == validStatuses.end()) {
         QMessageBox::warning(nullptr, "Invalid Status",
                              "❌ Status must be one of:\nActive, Inactive, On Probation, Resigned, Terminated.");
         return false;
     }
 
-<<<<<<< HEAD
-=======
-    // ✅ Update if exists
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     for (auto& e : employees) {
         if (e.cin == cin) {
             e = updated;
@@ -233,7 +178,6 @@ Employee* GestionEmployee::findEmployee(const std::string& cin)
     }
     return nullptr;
 }
-<<<<<<< HEAD
 
 // ===================================================
 //                GET SORTED EMPLOYEES
@@ -257,5 +201,3 @@ std::vector<Employee> GestionEmployee::getSorted(const std::string& field) const
 
     return sorted;
 }
-=======
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94

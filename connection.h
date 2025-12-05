@@ -10,6 +10,7 @@ public:
     void closeConnection();
     QSqlDatabase getDatabase();
 
+
 private:
     Connection(); // constructeur privé
     ~Connection(); // destructeur privé

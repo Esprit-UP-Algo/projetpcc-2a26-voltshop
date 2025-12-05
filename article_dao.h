@@ -17,4 +17,8 @@ public:
     static bool remove(int sku);            // DELETE
     static bool exists(int sku);            // SELECT 1
     static QVector<Article> fetchAll();     // SELECT *
+    static QVector<Article> fetchBelowStock(int threshold);
+    static QVector<Article> fetchAllOrderByStock(bool ascending = true);
+    static QVector<Article> fetchAllSortedByStock();
+    static QVector<Article> fetchStockBetween(int minStock, int maxStock);
 };

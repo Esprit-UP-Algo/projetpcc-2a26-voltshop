@@ -7,13 +7,8 @@
 
 Transaction::Transaction() {}
 
-<<<<<<< HEAD
-Transaction::Transaction(int id, QString amount, QString pay_method, QDate date_trans, QString status, int idcom, int refId)
-    : id(id), amount(amount), pay_method(pay_method), date_trans(date_trans), status(status), idcom(idcom), refId(refId)
-=======
 Transaction::Transaction(int id, QString amount, QString pay_method, QDate date_trans, QString status, int refId)
     : id(id), amount(amount), pay_method(pay_method), date_trans(date_trans), status(status), refId(refId)
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 {}
 
 bool Transaction::ajouter()
@@ -33,22 +28,11 @@ bool Transaction::ajouter()
     if (qid.next()) nextId = qid.value(0).toInt();
     id = nextId;
 
-<<<<<<< HEAD
-    // Build INSERT: include required ID column (refId -> TAB_TRANS.ID) and optional IDCOM
-=======
     // Build INSERT: include required ID column (refId -> TAB_TRANS.ID)
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     QString cols = "IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS";
     // Use TO_DATE on the placeholder so Oracle converts the provided string to a DATE
     // Use DD/MM/YYYY HH24:MI:SS and always send a time part to avoid format mismatches
     QString vals = ":IDT, :ID, :AMOUNT, :PAY_METHOD, TO_DATE(:DATE_TRANS,'DD/MM/YYYY HH24:MI:SS'), :STATUS";
-<<<<<<< HEAD
-    if (idcom > 0) {
-        cols += ", IDCOM";
-        vals += ", :IDCOM";
-    }
-=======
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
     QString sql = QString("INSERT INTO TAB_TRANS (%1) VALUES (%2)").arg(cols, vals);
     query.prepare(sql);
     query.bindValue(":IDT", id);
@@ -57,11 +41,7 @@ bool Transaction::ajouter()
     query.bindValue(":PAY_METHOD", pay_method);
     query.bindValue(":DATE_TRANS", date_trans.toString("dd/MM/yyyy") + " 00:00:00");
     query.bindValue(":STATUS", status);
-<<<<<<< HEAD
-    if (idcom > 0) query.bindValue(":IDCOM", idcom);
-=======
     Q_UNUSED(id);
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
     if (!query.exec()) {
         qDebug() << "❌ Erreur ajout transaction :" << query.lastError().text();
@@ -80,14 +60,33 @@ bool Transaction::supprimer(int id)
         return false;
     }
 
-    QSqlQuery query;
-    query.prepare("DELETE FROM TAB_TRANS WHERE IDT = :ID");
-    query.bindValue(":ID", id);
-
-    if (!query.exec()) {
-        qDebug() << "❌ Erreur suppression transaction :" << query.lastError().text();
+    // Use the singleton's database handle explicitly and run the DELETE inside a transaction
+    QSqlDatabase db = conn.getDatabase();
+    QSqlQuery query(db);
+    // Delete by the transaction primary key IDT
+    if (!query.prepare("DELETE FROM TAB_TRANS WHERE ID = :ID")) {
+        qDebug() << "❌ Erreur préparation suppression transaction :" << query.lastError().text();
         return false;
     }
+    query.bindValue(":ID", id);
+
+    db.transaction();
+    const bool ok = query.exec();
+    if (!ok) {
+        qDebug() << "❌ Erreur suppression transaction :" << query.lastError().text();
+        db.rollback();
+        return false;
+    }
+
+    // Ensure a row was actually deleted
+    const int affected = query.numRowsAffected();
+    if (affected <= 0) {
+        qDebug() << "⚠️ No transaction deleted (IDT not found):" << id;
+        db.rollback();
+        return false;
+    }
+
+    db.commit();
     qDebug() << "✅ Transaction supprimée avec succès, id:" << id;
     return true;
 }
@@ -101,11 +100,7 @@ QSqlQueryModel* Transaction::afficher()
     }
 
     QSqlQueryModel* model = new QSqlQueryModel();
-<<<<<<< HEAD
-    model->setQuery("SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS, IDCOM FROM TAB_TRANS");
-=======
     model->setQuery("SELECT IDT, ID, AMOUNT, PAY_METHOD, DATE_TRANS, STATUS FROM TAB_TRANS");
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
     if (model->lastError().isValid()) {
         qDebug() << "❌ Erreur lors de l'affichage:" << model->lastError().text();
@@ -125,14 +120,7 @@ bool Transaction::modifier()
 
     QSqlQuery query;
     
-<<<<<<< HEAD
-    QString queryStr = "UPDATE TAB_TRANS SET AMOUNT = :AMOUNT, PAY_METHOD = :PAY_METHOD, DATE_TRANS = TO_DATE(:DATE_TRANS,'DD/MM/YYYY HH24:MI:SS'), STATUS = :STATUS, ID = :ID";
-    if (idcom > 0) queryStr += ", IDCOM = :IDCOM";
-    else queryStr += ", IDCOM = NULL";
-    queryStr += " WHERE IDT = :IDT";
-=======
     QString queryStr = "UPDATE TAB_TRANS SET AMOUNT = :AMOUNT, PAY_METHOD = :PAY_METHOD, DATE_TRANS = TO_DATE(:DATE_TRANS,'DD/MM/YYYY HH24:MI:SS'), STATUS = :STATUS, ID = :ID WHERE IDT = :IDT";
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
     if (!query.prepare(queryStr)) {
         qDebug() << "❌ Erreur préparation requête :" << query.lastError().text();
@@ -145,11 +133,7 @@ bool Transaction::modifier()
     // bind date as dd/MM/yyyy plus a time component so TO_DATE format matches
     query.bindValue(":DATE_TRANS", date_trans.toString("dd/MM/yyyy") + " 00:00:00");
     query.bindValue(":STATUS", status);
-<<<<<<< HEAD
-    if (idcom > 0) query.bindValue(":IDCOM", idcom);
-=======
     
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94
 
     qDebug() << "Modifier requête:" << queryStr;
     qDebug() << ":DATE_TRANS bind:" << date_trans.toString("dd/MM/yyyy") + " 00:00:00" << " :IDT=" << id << " :ID=" << refId;

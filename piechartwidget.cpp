@@ -3,21 +3,67 @@
 #include <QStyleOption>
 #include <QPainterPath>
 #include <cmath>
+#include <QPropertyAnimation>
+#include <QShowEvent>
+#include <QAbstractAnimation>
+#include <QEasingCurve>
 
 static const double PI_CONST = 3.14159265358979323846;
 
 PieChartWidget::PieChartWidget(QWidget *parent)
     : QWidget(parent)
 {
-    // A simple palette of colors
+    // A focused blue palette used for transaction/payment status display
     m_colors = {
-        QColor(52, 152, 219), // blue
-        QColor(231, 76, 60),  // red
-        QColor(243, 156, 18), // orange
-        QColor(46, 204, 113), // green
-        QColor(155, 89, 182), // purple
-        QColor(52, 73, 94)    // dark
+        QColor(2, 62, 138),   // deep navy blue
+        QColor(46,204,113),   // green accent (for one status)
+        QColor(102,179,231),       // light blue
+        QColor(0, 50, 113),   // #003271 dark navy
+        QColor(44,130,201),   // #2C82C9 primary blue
+        QColor(90,180,240),   // light accent
+        QColor(46,204,113),   // green
+        QColor(243,156,18),   // orange
+        QColor(155,89,182)    // purple
     };
+
+    // Setup a fade-in effect for when this widget is shown
+    m_opacityEffect = new QGraphicsOpacityEffect(this);
+    m_opacityEffect->setOpacity(0.0);
+    setGraphicsEffect(m_opacityEffect);
+    m_fadeIn = new QPropertyAnimation(m_opacityEffect, "opacity", this);
+    m_fadeIn->setDuration(350);
+    m_fadeIn->setStartValue(0.0);
+    m_fadeIn->setEndValue(1.0);
+    // Scale/pop animation using the popScale property
+    m_scaleAnim = new QPropertyAnimation(this, "popScale", this);
+    m_scaleAnim->setDuration(300);
+    m_scaleAnim->setStartValue(0.95);
+    m_scaleAnim->setEndValue(1.0);
+    m_scaleAnim->setEasingCurve(QEasingCurve::OutBack);
+}
+
+QColor PieChartWidget::getColorForItem(const QString &key, int index) const
+{
+    if (m_customColors.contains(key)) {
+        return m_customColors[key];
+    } else {
+        return m_defaultColors[index % m_defaultColors.size()];
+    }
+}
+
+void PieChartWidget::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    if (m_fadeIn) {
+        m_fadeIn->stop();
+        m_fadeIn->setDirection(QAbstractAnimation::Forward);
+        m_fadeIn->start();
+    }
+    if (m_scaleAnim) {
+        m_scaleAnim->stop();
+        m_scaleAnim->setDirection(QAbstractAnimation::Forward);
+        m_scaleAnim->start();
+    }
 }
 
 void PieChartWidget::setData(const QMap<QString,int> &data)
@@ -26,10 +72,26 @@ void PieChartWidget::setData(const QMap<QString,int> &data)
     update();
 }
 
+void PieChartWidget::setColors(const QMap<QString, QColor> &colors)
+{
+    m_customColors = colors;
+    update();
+}
+
 void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
+
+    // apply a small scale transform for the pop effect around the widget center
+    if (!qFuzzyCompare(m_popScale, (qreal)1.0)) {
+        p.save();
+        const qreal cx = width() * 0.5;
+        const qreal cy = height() * 0.5;
+        p.translate(cx, cy);
+        p.scale(m_popScale, m_popScale);
+        p.translate(-cx, -cy);
+    }
 
     // draw background/style
     QStyleOption opt;
@@ -50,7 +112,7 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         titleFont.setPointSize(qMax(10, r.height() / 24));
         titleFont.setBold(true);
         p.setFont(titleFont);
-        p.setPen(palette().windowText().color());
+        p.setPen(Qt::white);
         QRect titleRect = QRect(pieRect.left(), r.top(), pieRect.width(), 26);
         p.drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter, m_title);
     }
@@ -85,8 +147,8 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
 
         // compute offset for explode effect
         qreal mid = startAngle + span / 2.0;
-    qreal dx = std::cos(mid * PI_CONST / 180.0) * explodeDist;
-    qreal dy = std::sin(mid * PI_CONST / 180.0) * explodeDist;
+        qreal dx = std::cos(mid * PI_CONST / 180.0) * explodeDist;
+        qreal dy = std::sin(mid * PI_CONST / 180.0) * explodeDist;
 
         QRectF shifted = pieF.translated(dx, dy);
 
@@ -122,7 +184,7 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         QColor col = m_colors[colorIndex % m_colors.size()];
         // label on slice if large enough
         qreal mid = startAngle + span / 2.0;
-    qreal labelAngle = mid * PI_CONST / 180.0;
+        qreal labelAngle = mid * PI_CONST / 180.0;
         qreal dx = std::cos(labelAngle) * (radius * 0.45);
         qreal dy = std::sin(labelAngle) * (radius * 0.45);
         QPointF labelCenter(centerX + dx, centerY + dy);
@@ -133,18 +195,24 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
             insideFont.setBold(true);
             insideFont.setPointSize(qMax(8, r.height() / 48));
             p.setFont(insideFont);
-            p.setPen(Qt::white);
+            // choose contrasting pen color for readability
+            if (col.lightness() < 140)
+                p.setPen(Qt::white);
+            else
+                p.setPen(Qt::black);
             p.drawText(QRectF(labelCenter.x()-40, labelCenter.y()-10, 80, 20), Qt::AlignCenter, inside);
         }
 
         // legend entry: colored square + text on single line
         QRect sw(legendRect.left(), y, 18, 14);
         p.fillRect(sw, col);
-        p.setPen(palette().text().color());
+        // draw a thin darker border for the swatch so the legend matches the slices
+        p.setPen(QPen(col.darker(150), 1));
         p.drawRect(sw);
 
         QString legendText = QString("%1 (%2) — %3 %").arg(key).arg(value).arg(QString::number(pct,'f',1));
         QRect textR = QRect(sw.right() + 8, y - 2, legendRect.width() - (sw.width() + 8), 18);
+        p.setPen(palette().text().color());
         p.drawText(textR, Qt::AlignLeft | Qt::AlignVCenter, legendText);
 
         y += 22;
@@ -152,10 +220,8 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         colorIndex++;
         if (y > legendRect.bottom() - 20) break; // avoid overflow
     }
+
+    if (!qFuzzyCompare(m_popScale, (qreal)1.0)) {
+        p.restore();
+    }
 }
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> fa065ab36e11e25d1251f5a8cdc9329a165d3f94

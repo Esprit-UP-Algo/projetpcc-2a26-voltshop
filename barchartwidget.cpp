@@ -20,6 +20,13 @@ void BarChartWidget::setData(const QMap<QString,int> &data)
     update();
 }
 
+
+void BarChartWidget::setColors(const QMap<QString, QColor> &colors)
+{
+    m_customColors = colors;
+    update();
+}
+
 void BarChartWidget::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
@@ -37,14 +44,14 @@ void BarChartWidget::paintEvent(QPaintEvent *)
     if (!m_title.isEmpty()) {
         QFont f = p.font(); f.setPointSize(14); f.setBold(true);
         p.setFont(f);
-        p.setPen(Qt::black);
+        p.setPen(Qt::white);
         p.drawText(QRect(r.left(), r.top(), r.width(), 24), Qt::AlignCenter, m_title);
     }
 
     // Chart area
     QRect chartRect = r.adjusted(0, 30, 0, -20);
     if (m_data.isEmpty()) {
-        p.setPen(Qt::black);
+        p.setPen(Qt::white);
         p.drawText(chartRect, Qt::AlignCenter, "No Data");
         return;
     }

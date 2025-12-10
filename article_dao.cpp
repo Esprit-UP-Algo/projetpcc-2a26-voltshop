@@ -53,16 +53,52 @@ bool article_dao::update(const Article& a) {
     return ok;
 }
 
-bool article_dao::remove(int sku) {
-    QSqlQuery q;
-    q.prepare("DELETE FROM TAB_ART WHERE SKU=:sku");
-    q.bindValue(":sku", sku);
+bool article_dao::remove(int sku)
+{
+    QSqlDatabase db = QSqlDatabase::database();
+    if (!db.isOpen()) {
+        qDebug() << "DB not open in article_dao::remove";
+        return false;
+    }
 
-    auto db = QSqlDatabase::database();
     db.transaction();
-    const bool ok = q.exec();
-    ok ? db.commit() : db.rollback();
-    return ok;
+
+    // 1) Supprimer d'abord dans CONCERNER (toutes les commandes qui utilisent cet article)
+    {
+        QSqlQuery qCon(db);
+        if (!qCon.prepare("DELETE FROM CONCERNER WHERE SKU = :sku")) {
+            qDebug() << "Error prepare DELETE CONCERNER:" << qCon.lastError().text();
+            db.rollback();
+            return false;
+        }
+        qCon.bindValue(":sku", sku);
+
+        if (!qCon.exec()) {
+            qDebug() << "Error exec DELETE CONCERNER:" << qCon.lastError().text();
+            db.rollback();
+            return false;
+        }
+    }
+
+    // 2) Supprimer l'article dans TAB_ART
+    {
+        QSqlQuery qArt(db);
+        if (!qArt.prepare("DELETE FROM TAB_ART WHERE SKU = :sku")) {
+            qDebug() << "Error prepare DELETE TAB_ART:" << qArt.lastError().text();
+            db.rollback();
+            return false;
+        }
+        qArt.bindValue(":sku", sku);
+
+        if (!qArt.exec()) {
+            qDebug() << "Error exec DELETE TAB_ART:" << qArt.lastError().text();
+            db.rollback();
+            return false;
+        }
+    }
+
+    db.commit();
+    return true;
 }
 
 bool article_dao::exists(int sku) {
@@ -130,7 +166,43 @@ QVector<Article> article_dao::fetchBelowStock(int threshold)
 
     return result;
 }
-// article_dao.cpp
+QVector<Article> article_dao::fetchStockBetween(int minStock, int maxStock)
+{
+    QVector<Article> result;
+    QSqlQuery q;
+
+    q.prepare(R"(
+        SELECT SKU, NAME, CATEGORY, BRAND, PURCHASEPRICE,
+               SELLINGPRICE, STOCK, LOCATION, COMPATIBILITY
+        FROM TAB_ART
+        WHERE STOCK BETWEEN :minVal AND :maxVal
+        ORDER BY STOCK ASC
+    )");
+
+    q.bindValue(":minVal", minStock);
+    q.bindValue(":maxVal", maxStock);
+
+    if (!q.exec())
+        return result;
+
+    while (q.next()) {
+        Article a;
+        a.SKU           = q.value(0).toInt();
+        a.NAME          = q.value(1).toString();
+        a.CATEGORY      = q.value(2).toString();
+        a.BRAND         = q.value(3).toString();
+        a.PURCHASEPRICE = q.value(4).toDouble();
+        a.SELLINGPRICE  = q.value(5).toDouble();
+        a.STOCK         = q.value(6).toInt();
+        a.LOCATION      = q.value(7).toString();
+        a.COMPATIBILITY = q.value(8).toString();
+
+        result.append(a);
+    }
+
+    return result;
+}
+
 
 QVector<Article> article_dao::fetchAllOrderByStock(bool ascending)
 {

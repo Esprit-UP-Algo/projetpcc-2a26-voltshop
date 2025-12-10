@@ -16,6 +16,92 @@
         <file>stat.jpg</file>
         <file>stat2.png</file>
         <file>ressource/edit.png</file>
-	<file>ressource/qr1.jpg</file>
+        <file>ressource/qr1.jpg</file>
+        <file>ressource/LoginBack.jpg</file>
+        <file>ressource/logo12.png</file>
+        <file>ressource/image_back.jpg</file>
+        <file>ressource/PDF.jpg</file>
+        <file>ressource/2.png</file>
+        <file>ressource/3.png</file>
+        <file>ressource/4.png</file>
+        <file>ressource/5.png</file>
+        <file>ressource/6.png</file>
+        <file>ressource/7.png</file>
+        <file>ressource/8.png</file>
+        <file>ressource/9.png</file>
+        <file>ressource/10.png</file>
+        <file>ressource/11.png</file>
+        <file>ressource/12.png</file>
+        <file>ressource/13.png</file>
+        <file>ressource/15.png</file>
+        <file>ressource/16.png</file>
+        <file>ressource/17.png</file>
+        <file>ressource/19.png</file>
+        <file>ressource/20.png</file>
+        <file>ressource/21.png</file>
+        <file>ressource/22.png</file>
+        <file>ressource/24.png</file>
+        <file>ressource/25.png</file>
+        <file>ressource/26.png</file>
+        <file>ressource/27.png</file>
+        <file>ressource/28.png</file>
+        <file>ressource/29.png</file>
+        <file>ressource/30.png</file>
+        <file>ressource/31.png</file>
+        <file>ressource/32.png</file>
+        <file>ressource/34.png</file>
+        <file>ressource/35.png</file>
+        <file>ressource/36.png</file>
+        <file>ressource/37.png</file>
+        <file>ressource/38.png</file>
+        <file>ressource/39.png</file>
+        <file>ressource/40.png</file>
+        <file>ressource/41.png</file>
+        <file>ressource/42.png</file>
+        <file>ressource/43.png</file>
+        <file>ressource/44.png</file>
+        <file>ressource/90.png</file>
+        <file>ressource/91.png</file>
+        <file>ressource/92.png</file>
+        <file>ressource/93.png</file>
+        <file>ressource/94.png</file>
+        <file>ressource/95.png</file>
+        <file>ressource/96.png</file>
+
+        <!-- PRODUITS -->
+        <file>ressource/produit/1001.jpeg</file>
+        <file>ressource/produit/1002.png</file>
+        <file>ressource/produit/1003.jpeg</file>
+        <file>ressource/produit/2001.jpeg</file>
+        <file>ressource/produit/2002.jpeg</file>
+        <file>ressource/produit/2003.jpeg</file>
+        <file>ressource/produit/3001.jpeg</file>
+        <file>ressource/produit/3002.png</file>
+        <file>ressource/produit/4001.jpeg</file>
+        <file>ressource/produit/4002.jpeg</file>
+        <file>ressource/produit/4003.jpeg</file>
+        <file>ressource/produit/5001.jpeg</file>
+        <file>ressource/produit/5003.jpeg</file>
+        <file>ressource/produit/5006.jpeg</file>
+        <file>ressource/produit/6001.jpeg</file>
+        <file>ressource/produit/6002.jpeg</file>
+        <file>ressource/produit/6003.jpeg</file>
+        <file>ressource/produit/6004.jpeg</file>
+        <file>ressource/produit/7001.jpeg</file>
+        <file>ressource/produit/7003.jpeg</file>
+        <file>ressource/555.png</file>
+        <file>ressource/666.png</file>
+        <file>ressource/777.png</file>
+        <file>ressource/888.png</file>
+        <file>ressource/produit/5002.jpeg</file>
+        <file>ressource/produit/5005.jpeg</file>
+        <file>ressource/adresse.png</file>
+        <file>ressource/status.png</file>
+        <file>ressource/salary.png</file>
+        <file>ressource/position.png</file>
+        <file>ressource/full name.png</file>
+        <file>ressource/add employee.jpeg</file>
+        <file>ressource/look for most hours worked.png</file>
+
     </qresource>
 </RCC>

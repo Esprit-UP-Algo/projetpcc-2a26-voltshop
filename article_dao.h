@@ -20,4 +20,5 @@ public:
     static QVector<Article> fetchBelowStock(int threshold);
     static QVector<Article> fetchAllOrderByStock(bool ascending = true);
     static QVector<Article> fetchAllSortedByStock();
+    static QVector<Article> fetchStockBetween(int minStock, int maxStock);
 };

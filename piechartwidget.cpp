@@ -17,7 +17,13 @@ PieChartWidget::PieChartWidget(QWidget *parent)
     m_colors = {
         QColor(2, 62, 138),   // deep navy blue
         QColor(46,204,113),   // green accent (for one status)
-        QColor(102,179,231)   // light blue
+        QColor(102,179,231),       // light blue
+        QColor(0, 50, 113),   // #003271 dark navy
+        QColor(44,130,201),   // #2C82C9 primary blue
+        QColor(90,180,240),   // light accent
+        QColor(46,204,113),   // green
+        QColor(243,156,18),   // orange
+        QColor(155,89,182)    // purple
     };
 
     // Setup a fade-in effect for when this widget is shown
@@ -34,6 +40,15 @@ PieChartWidget::PieChartWidget(QWidget *parent)
     m_scaleAnim->setStartValue(0.95);
     m_scaleAnim->setEndValue(1.0);
     m_scaleAnim->setEasingCurve(QEasingCurve::OutBack);
+}
+
+QColor PieChartWidget::getColorForItem(const QString &key, int index) const
+{
+    if (m_customColors.contains(key)) {
+        return m_customColors[key];
+    } else {
+        return m_defaultColors[index % m_defaultColors.size()];
+    }
 }
 
 void PieChartWidget::showEvent(QShowEvent *event)
@@ -54,6 +69,12 @@ void PieChartWidget::showEvent(QShowEvent *event)
 void PieChartWidget::setData(const QMap<QString,int> &data)
 {
     m_data = data;
+    update();
+}
+
+void PieChartWidget::setColors(const QMap<QString, QColor> &colors)
+{
+    m_customColors = colors;
     update();
 }
 
@@ -91,7 +112,7 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         titleFont.setPointSize(qMax(10, r.height() / 24));
         titleFont.setBold(true);
         p.setFont(titleFont);
-        p.setPen(Qt::black);
+        p.setPen(Qt::white);
         QRect titleRect = QRect(pieRect.left(), r.top(), pieRect.width(), 26);
         p.drawText(titleRect, Qt::AlignLeft | Qt::AlignVCenter, m_title);
     }
@@ -126,8 +147,8 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
 
         // compute offset for explode effect
         qreal mid = startAngle + span / 2.0;
-    qreal dx = std::cos(mid * PI_CONST / 180.0) * explodeDist;
-    qreal dy = std::sin(mid * PI_CONST / 180.0) * explodeDist;
+        qreal dx = std::cos(mid * PI_CONST / 180.0) * explodeDist;
+        qreal dy = std::sin(mid * PI_CONST / 180.0) * explodeDist;
 
         QRectF shifted = pieF.translated(dx, dy);
 
@@ -163,7 +184,7 @@ void PieChartWidget::paintEvent(QPaintEvent * /*event*/)
         QColor col = m_colors[colorIndex % m_colors.size()];
         // label on slice if large enough
         qreal mid = startAngle + span / 2.0;
-    qreal labelAngle = mid * PI_CONST / 180.0;
+        qreal labelAngle = mid * PI_CONST / 180.0;
         qreal dx = std::cos(labelAngle) * (radius * 0.45);
         qreal dy = std::sin(labelAngle) * (radius * 0.45);
         QPointF labelCenter(centerX + dx, centerY + dy);

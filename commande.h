@@ -9,6 +9,11 @@
 #include <QSqlError>
 #include "ui_mainwindow.h"
 
+struct Location {
+    QString name;
+    double latitude;
+    double longitude;
+};
 
 class Commande
 {
@@ -28,12 +33,18 @@ public:
     QMap<QString, int> stat_statuts();
     QMap<QString, int> stat_par_mois();
 
+    static Location getCoordinate(QString name);
+    static double calculateDistance(Location a, Location b);
+
+
 
 private:
     QString code;
     QString client, produits, statut;
     QDate date_commande;
     double total;
+
+
 };
 
 #endif // COMMANDE_H

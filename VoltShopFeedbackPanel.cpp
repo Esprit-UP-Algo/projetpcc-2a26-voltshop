@@ -18,7 +18,7 @@ VoltShopFeedbackPanel::VoltShopFeedbackPanel(QWidget *parent)
     connect(&nodeProcess, &QProcess::errorOccurred,
             this, &VoltShopFeedbackPanel::onNodeError);
     nodeProcess.setProcessChannelMode(QProcess::MergedChannels);
-    this->setStyleSheet("color:black;");
+    this->setStyleSheet("color:white;");
 
 
 

@@ -1,0 +1,140 @@
+// Role-based access control implementation additions for mainwindow.cpp
+// Append these methods at the end of mainwindow.cpp before the closing braces
+
+// =====================================================
+// ROLE-BASED ACCESS CONTROL
+// =====================================================
+void MainWindow::setInitialRole(const QString &username, const QString &role)
+{
+    m_currentUsername = username;
+    m_currentRole = role.toLower();
+    
+    LOG_INFO(QString("Setting role for user %1: %2").arg(username, role));
+    
+    // Update window title
+    setWindowTitle(QString("VoltShop - %1 (%2)").arg(username, role));
+    
+    // Update status bar
+    if (statusBar()) {
+        statusBar()->showMessage(QString("Logged in as: %1 | Role: %2").arg(username, role));
+    }
+    
+    // Apply role restrictions
+    applyRoleRestrictions(m_currentRole);
+    
+    // Open appropriate tab for role
+    openRoleTab(m_currentRole);
+}
+
+void MainWindow::openRoleTab(const QString &role)
+{
+    // Map roles to stack widget indices
+    // 0 = Client, 1 = Commande, 2 = Stock, 3 = Transaction, 4 = Employee
+    
+    if (role == "client") {
+        ui->stackedWidget->setCurrentIndex(0);
+        LOG_INFO("Opened Client tab for role: client");
+    } else if (role == "commande") {
+        ui->stackedWidget->setCurrentIndex(1);
+        LOG_INFO("Opened Commande tab for role: commande");
+    } else if (role == "stock") {
+        ui->stackedWidget->setCurrentIndex(2);
+        LOG_INFO("Opened Stock tab for role: stock");
+    } else if (role == "transaction") {
+        ui->stackedWidget->setCurrentIndex(3);
+        LOG_INFO("Opened Transaction tab for role: transaction");
+    } else if (role == "employee" || role == "admin") {
+        ui->stackedWidget->setCurrentIndex(0); // Default to first tab
+        LOG_INFO("Opened default tab for role: " + role);
+    } else {
+        LOG_WARNING("Unknown role: " + role);
+        ui->stackedWidget->setCurrentIndex(0);
+    }
+}
+
+void MainWindow::applyRoleRestrictions(const QString &role)
+{
+    // By default, disable all navigation buttons
+    bool enableClient = false;
+    bool enableCommande = false;
+    bool enableStock = false;
+    bool enableTransaction = false;
+    bool enableEmployee = false;
+    
+    // Enable buttons based on role
+    if (role == "client") {
+        enableClient = true;
+    } else if (role == "commande") {
+        enableCommande = true;
+    } else if (role == "stock") {
+        enableStock = true;
+    } else if (role == "transaction") {
+        enableTransaction = true;
+    } else if (role == "employee" || role == "admin") {
+        // Employee and admin have access to everything
+        enableClient = true;
+        enableCommande = true;
+        enableStock = true;
+        enableTransaction = true;
+        enableEmployee = true;
+    }
+    
+    // Apply restrictions to UI buttons
+    if (ui->btn_Client) {
+        ui->btn_Client->setEnabled(enableClient);
+        ui->btn_Client->setStyleSheet(enableClient ? "" : "background-color: #cccccc; color: #666666;");
+    }
+    
+    if (ui->btn_Commande) {
+        ui->btn_Commande->setEnabled(enableCommande);
+        ui->btn_Commande->setStyleSheet(enableCommande ? "" : "background-color: #cccccc; color: #666666;");
+    }
+    
+    if (ui->btn_Stock) {
+        ui->btn_Stock->setEnabled(enableStock);
+        ui->btn_Stock->setStyleSheet(enableStock ? "" : "background-color: #cccccc; color: #666666;");
+    }
+    
+    if (ui->btn_Transaction) {
+        ui->btn_Transaction->setEnabled(enableTransaction);
+        ui->btn_Transaction->setStyleSheet(enableTransaction ? "" : "background-color: #cccccc; color: #666666;");
+    }
+    
+    if (ui->btn_Employee) {
+        ui->btn_Employee->setEnabled(enableEmployee);
+        ui->btn_Employee->setStyleSheet(enableEmployee ? "" : "background-color: #cccccc; color: #666666;");
+    }
+    
+    LOG_INFO(QString("Role restrictions applied - Client:%1 Commande:%2 Stock:%3 Transaction:%4 Employee:%5")
+        .arg(enableClient).arg(enableCommande).arg(enableStock).arg(enableTransaction).arg(enableEmployee));
+}
+
+void MainWindow::on_quit_clicked()
+{
+    LOG_INFO(QString("User %1 logging out").arg(m_currentUsername));
+    
+    // Temporarily disable quit on last window closed
+    qApp->setQuitOnLastWindowClosed(false);
+    
+    // Hide this window
+    this->hide();
+    
+    // Create new Login dialog
+    Login *loginDialog = new Login();
+    loginDialog->setAttribute(Qt::WA_DeleteOnClose);
+    loginDialog->show();
+    
+    LOG_INFO("Login dialog created for re-authentication");
+    
+    // Schedule MainWindow deletion with safe check using QPointer
+    QPointer<MainWindow> safeThis(this);
+    QTimer::singleShot(100, qApp, [safeThis]() {
+        if (safeThis) {
+            LOG_INFO("Deleting MainWindow after logout");
+            safeThis->deleteLater();
+        }
+        
+        // Re-enable quit on last window closed
+        qApp->setQuitOnLastWindowClosed(true);
+    });
+}

@@ -22,9 +22,12 @@ public:
     static bool exists(const QString& cin);
     static QVector<Client> fetchAll();
     static bool validateClient(const Client& c, QString& errorMessage);
+
+    // 🔹 récupération d'un client par CIN
+    static bool getByCin(const QString &cin, Client &out);
+
+    // 🔹 journal (historique)
     static void journalAdd(const QString &action, const Client &c);
-    static void journalLoad(QListWidget *list);
-    static void journalClear();
-
-
+    static void journalLoad(QListWidget *listWidget);
+    static void journalClear();      // 🔴 A JOUTER
 };

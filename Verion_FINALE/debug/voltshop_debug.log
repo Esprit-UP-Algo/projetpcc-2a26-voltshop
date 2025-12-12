@@ -1,0 +1,151 @@
+[2025-12-10 20:34:06.168] [INFO ] === Logger initialized ===
+[2025-12-10 20:34:06.169] [INFO ] Signal handlers installed
+[2025-12-10 20:34:06.170] [INFO ] === VoltShop Application Started ===
+[2025-12-10 20:34:06.860] [INFO ] Database connection established successfully
+[2025-12-10 20:34:07.050] [INFO ] Login dialog created
+[2025-12-10 20:34:13.779] [INFO ] Login attempt for user: admin
+[2025-12-10 20:34:13.800] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 20:34:13.803] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 20:34:13.803] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 20:34:13.804] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 20:34:13.805] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 20:34:15.200] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 20:34:15.212] [INFO ] Full authentication successful for user: admin
+[2025-12-10 20:34:15.212] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 20:34:15.213] [INFO ] Creating MainWindow instance
+[2025-12-10 20:34:16.684] [INFO ] MainWindow constructor started
+[2025-12-10 20:34:16.698] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 20:34:17.093] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 20:34:17.095] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 20:34:17.096] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 20:34:17.445] [INFO ] MainWindow created and shown successfully
+[2025-12-10 20:37:03.577] [INFO ] === Logger initialized ===
+[2025-12-10 20:37:03.578] [INFO ] Signal handlers installed
+[2025-12-10 20:37:03.579] [INFO ] === VoltShop Application Started ===
+[2025-12-10 20:37:04.118] [INFO ] Database connection established successfully
+[2025-12-10 20:37:04.276] [INFO ] Login dialog created
+[2025-12-10 20:37:50.358] [INFO ] === Logger initialized ===
+[2025-12-10 20:37:50.359] [INFO ] Signal handlers installed
+[2025-12-10 20:37:50.359] [INFO ] === VoltShop Application Started ===
+[2025-12-10 20:37:50.873] [INFO ] Database connection established successfully
+[2025-12-10 20:37:51.026] [INFO ] Login dialog created
+[2025-12-10 20:37:55.556] [INFO ] Login attempt for user: admin
+[2025-12-10 20:37:55.560] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 20:37:55.560] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 20:37:55.561] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 20:37:55.561] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 20:37:55.562] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 20:37:56.650] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 20:37:56.654] [INFO ] Full authentication successful for user: admin
+[2025-12-10 20:37:56.654] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 20:37:56.654] [INFO ] Creating MainWindow instance
+[2025-12-10 20:37:58.062] [INFO ] MainWindow constructor started
+[2025-12-10 20:37:58.064] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 20:37:58.424] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 20:37:58.424] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 20:37:58.426] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 20:37:58.753] [INFO ] MainWindow created and shown successfully
+[2025-12-10 20:42:46.285] [INFO ] === Logger initialized ===
+[2025-12-10 20:42:46.286] [INFO ] Signal handlers installed
+[2025-12-10 20:42:46.286] [INFO ] === VoltShop Application Started ===
+[2025-12-10 20:42:46.818] [INFO ] Database connection established successfully
+[2025-12-10 20:42:46.972] [INFO ] Login dialog created
+[2025-12-10 20:42:51.137] [INFO ] Login attempt for user: admin
+[2025-12-10 20:42:51.147] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 20:42:51.148] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 20:42:51.148] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 20:42:51.149] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 20:42:51.150] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 20:42:52.392] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 20:42:52.397] [INFO ] Full authentication successful for user: admin
+[2025-12-10 20:42:52.397] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 20:42:52.397] [INFO ] Creating MainWindow instance
+[2025-12-10 20:42:53.842] [INFO ] MainWindow constructor started
+[2025-12-10 20:42:53.852] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 20:42:54.205] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 20:42:54.205] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 20:42:54.207] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 20:42:54.540] [INFO ] MainWindow created and shown successfully
+[2025-12-10 20:54:10.703] [INFO ] === VoltShop Application Exited with code 0 ===
+[2025-12-10 20:54:10.711] [INFO ] Login dialog destroyed
+[2025-12-10 20:54:10.776] [INFO ] === Logger shutting down ===
+[2025-12-10 21:20:50.432] [INFO ] === Logger initialized ===
+[2025-12-10 21:20:50.433] [INFO ] Signal handlers installed
+[2025-12-10 21:20:50.434] [INFO ] === VoltShop Application Started ===
+[2025-12-10 21:20:51.111] [INFO ] Database connection established successfully
+[2025-12-10 21:20:51.274] [INFO ] Login dialog created
+[2025-12-10 21:21:01.816] [INFO ] Login attempt for user: admin
+[2025-12-10 21:21:01.820] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 21:21:01.821] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 21:21:01.821] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 21:21:01.822] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 21:21:01.822] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 21:21:02.829] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 21:21:02.837] [INFO ] Full authentication successful for user: admin
+[2025-12-10 21:21:02.837] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 21:21:02.838] [INFO ] Creating MainWindow instance
+[2025-12-10 21:21:04.549] [INFO ] MainWindow constructor started
+[2025-12-10 21:21:04.550] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 21:21:04.550] [WARN ] Failed to connect Arduino RFID on COM6
+[2025-12-10 21:21:04.551] [WARN ] Failed to connect Arduino LCD on COM5
+[2025-12-10 21:21:04.921] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 21:21:04.922] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 21:21:04.923] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 21:21:05.271] [INFO ] MainWindow created and shown successfully
+[2025-12-10 21:30:46.567] [INFO ] === Logger initialized ===
+[2025-12-10 21:30:46.568] [INFO ] Signal handlers installed
+[2025-12-10 21:30:46.569] [INFO ] === VoltShop Application Started ===
+[2025-12-10 21:30:47.111] [INFO ] Database connection established successfully
+[2025-12-10 21:30:47.299] [INFO ] Login dialog created
+[2025-12-10 21:30:53.348] [INFO ] Login attempt for user: admin
+[2025-12-10 21:30:53.352] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 21:30:53.353] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 21:30:53.353] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 21:30:53.354] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 21:30:53.354] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 21:30:54.513] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 21:30:54.515] [INFO ] Full authentication successful for user: admin
+[2025-12-10 21:30:54.519] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 21:30:54.519] [INFO ] Creating MainWindow instance
+[2025-12-10 21:30:56.025] [INFO ] MainWindow constructor started
+[2025-12-10 21:30:56.026] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 21:30:56.026] [WARN ] Failed to connect Arduino RFID on COM6
+[2025-12-10 21:30:56.027] [WARN ] Failed to connect Arduino LCD on COM5
+[2025-12-10 21:38:23.080] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 21:38:23.081] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 21:38:23.083] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 21:38:23.090] [INFO ] MainWindow created and shown successfully
+[2025-12-10 21:38:25.136] [INFO ] === VoltShop Application Exited with code 0 ===
+[2025-12-10 21:38:25.136] [INFO ] Login dialog destroyed
+[2025-12-10 21:38:25.199] [INFO ] === Logger shutting down ===
+[2025-12-10 21:40:43.235] [INFO ] === Logger initialized ===
+[2025-12-10 21:40:43.236] [INFO ] Signal handlers installed
+[2025-12-10 21:40:43.237] [INFO ] === VoltShop Application Started ===
+[2025-12-10 21:40:43.763] [INFO ] Database connection established successfully
+[2025-12-10 21:40:43.940] [INFO ] Login dialog created
+[2025-12-10 21:40:55.186] [INFO ] Login attempt for user: admin
+[2025-12-10 21:40:55.194] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 21:40:55.194] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 21:40:55.196] [WARN ] Password mismatch for user: admin
+[2025-12-10 21:40:56.480] [WARN ] Failed login for user: admin
+[2025-12-10 21:40:59.290] [INFO ] Login attempt for user: admin
+[2025-12-10 21:40:59.295] [INFO ] Retrieved role from database: 'admin' for user: admin
+[2025-12-10 21:40:59.295] [DEBUG] Using plain text password verification for user: admin
+[2025-12-10 21:40:59.295] [DEBUG] User authenticated - Role: admin, TOTP: not set
+[2025-12-10 21:40:59.296] [INFO ] User admin authenticated successfully, role: admin
+[2025-12-10 21:40:59.297] [INFO ] User admin does not have 2FA enabled
+[2025-12-10 21:41:00.766] [INFO ] User admin declined 2FA enrollment, proceeding without 2FA
+[2025-12-10 21:41:00.769] [INFO ] Full authentication successful for user: admin
+[2025-12-10 21:41:00.769] [INFO ] Scheduling MainWindow creation for user: admin with role: admin
+[2025-12-10 21:41:00.770] [INFO ] Creating MainWindow instance
+[2025-12-10 21:41:02.226] [INFO ] MainWindow constructor started
+[2025-12-10 21:41:02.230] [INFO ] ExcelExporter initialized, script path: C:/Users/lastg/Desktop/integgggg/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)[1]/Version_FINAL V3 (2)/Version_FINAL V3 (2)/Version_FINAL V3/Verion_FINALE/Verion_FINALE/python_scripts/financial_export.py
+[2025-12-10 21:41:02.230] [WARN ] Failed to connect Arduino RFID on COM6
+[2025-12-10 21:41:02.231] [WARN ] Failed to connect Arduino LCD on COM5
+[2025-12-10 21:41:07.436] [INFO ] Setting role for user admin: admin (converted to: admin)
+[2025-12-10 21:41:07.438] [INFO ] Role restrictions applied - Client:1 Commande:1 Stock:1 Transaction:1 Employee:1
+[2025-12-10 21:41:07.440] [INFO ] Opened Employee tab for role: admin
+[2025-12-10 21:41:07.456] [INFO ] MainWindow created and shown successfully
+[2025-12-10 21:42:06.256] [INFO ] === VoltShop Application Exited with code 0 ===
+[2025-12-10 21:42:06.256] [INFO ] Login dialog destroyed
+[2025-12-10 21:42:06.336] [INFO ] === Logger shutting down ===
